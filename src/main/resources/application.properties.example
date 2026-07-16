@@ -1,0 +1,7 @@
+spring.application.name=
+
+spring.h2.console.enabled=
+spring.datasource.url=
+spring.datasource.driverClassName=
+spring.jpa.database-platform=
+spring.jpa.hibernate.ddl-auto=
