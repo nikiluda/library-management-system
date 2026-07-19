@@ -2,9 +2,6 @@ package com.zhanlin.library_management_system.models;
 
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,21 +14,16 @@ public class Reader {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "First name should is not be empty")
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @NotBlank(message = "Last name should is not be empty")
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @NotBlank(message = "Email should is not be empty")
-    @Email(message = "Email should be valid")
     @Column(nullable = false, unique = true)
     private String email;
 
-    @NotBlank(message = "Phone number should is not be empty")
-    @Pattern(regexp = "^\\\\+?[1-9]\\\\d{10,14}$", message = "Phone must be valid (e.g. +79991234567)")
+    @Column(nullable = false, unique = true)
     private String phone;
 
     @Column(name = "registration_date")
