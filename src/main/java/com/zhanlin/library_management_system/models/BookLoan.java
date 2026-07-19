@@ -50,7 +50,7 @@ public class BookLoan {
         this.loanDate = loanDate;
         this.dueDate = dueDate;
         this.returnDate = returnDate;
-        this.status = LoanStatus.ACTIVE;
+        this.status = status;
     }
 
     public Long getId() {
