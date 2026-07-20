@@ -22,7 +22,7 @@ public class BookMapper {
         return book;
     }
 
-    public void updatedBook(BookRequestDto dto , Book book) {
+    public void updateBook(BookRequestDto dto , Book book) {
         book.setTitle(dto.title());
         book.setAuthor(dto.author());
         book.setIsbn(dto.isbn());
