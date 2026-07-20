@@ -5,6 +5,10 @@ package com.zhanlin.library_management_system.services.book;
 import com.zhanlin.library_management_system.dto.book.BookRequestDto;
 import com.zhanlin.library_management_system.dto.book.BookResponseDto;
 
+import java.util.List;
+import java.util.Optional;
+
+
 public interface BookService {
     BookResponseDto createBook(BookRequestDto dto);
 
@@ -13,4 +17,10 @@ public interface BookService {
     BookResponseDto updateBook(Long id, BookRequestDto dto);
 
     void deleteBook(Long id);
+
+    List<BookResponseDto> searchByTitle(String title);
+
+    List<BookResponseDto> searchByAuthor(String author);
+
+    Optional<BookResponseDto> getBookByIsbn(String isbn);
 }

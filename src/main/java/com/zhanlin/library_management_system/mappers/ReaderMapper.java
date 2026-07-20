@@ -20,6 +20,15 @@ public class ReaderMapper {
 
     }
 
+    public void updateReader(ReaderRequestDto dto, Reader reader) {
+
+        reader.setFirstName(dto.firstName());
+        reader.setLastName(dto.lastName());
+        reader.setEmail(dto.email());
+        reader.setPhone(dto.email());
+
+    }
+
     public ReaderResponseDto toDto(Reader reader) {
         if (reader == null) return null;
 
