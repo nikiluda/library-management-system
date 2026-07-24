@@ -3,6 +3,8 @@ package com.zhanlin.library_management_system.services.reader;
 import com.zhanlin.library_management_system.dto.reader.ReaderRequestDto;
 import com.zhanlin.library_management_system.dto.reader.ReaderResponseDto;
 
+import java.util.List;
+
 
 public interface ReaderService {
 
@@ -13,4 +15,6 @@ public interface ReaderService {
     ReaderResponseDto updateReader(Long id, ReaderRequestDto dto);
 
     void deleteReader(Long id);
+
+    List<ReaderResponseDto> getAllReaders();
 }
