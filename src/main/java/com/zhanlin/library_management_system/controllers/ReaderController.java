@@ -26,7 +26,7 @@ public class ReaderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReaderResponseDto> getReaderById(@PathVariable("id") Long id) {
+    public ResponseEntity<ReaderResponseDto> getReaderById(@PathVariable Long id) {
         return ResponseEntity.ok(readerService.getReaderById(id));
     }
 
@@ -39,12 +39,12 @@ public class ReaderController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ReaderResponseDto> updateReader(@RequestBody @Valid ReaderRequestDto dto,
-                                                          @PathVariable("id") Long id) {
+                                                          @PathVariable Long id) {
          return ResponseEntity.ok(readerService.updateReader(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReader(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteReader(@PathVariable Long id) {
         readerService.deleteReader(id);
         return ResponseEntity
                 .noContent()
