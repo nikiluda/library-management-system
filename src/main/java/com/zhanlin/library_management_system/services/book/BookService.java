@@ -22,5 +22,9 @@ public interface BookService {
 
     List<BookResponseDto> searchByAuthor(String author);
 
+    List<BookResponseDto> search(String title, String author);
+
     Optional<BookResponseDto> getBookByIsbn(String isbn);
+
+    List<BookResponseDto> getAllBooks();
 }
