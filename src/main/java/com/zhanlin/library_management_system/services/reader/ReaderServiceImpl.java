@@ -8,6 +8,8 @@ import com.zhanlin.library_management_system.repository.ReaderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class ReaderServiceImpl implements ReaderService {
@@ -56,5 +58,11 @@ public class ReaderServiceImpl implements ReaderService {
     @Override
     public void deleteReader(Long  id) {
         readerRepository.delete(findById(id));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReaderResponseDto> getAllReaders() {
+        return readerRepository.findAll().stream().map(readerMapper::toDto).toList();
     }
 }
