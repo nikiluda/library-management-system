@@ -2,6 +2,7 @@ package com.zhanlin.library_management_system.services.book;
 
 import com.zhanlin.library_management_system.dto.book.BookRequestDto;
 import com.zhanlin.library_management_system.dto.book.BookResponseDto;
+import com.zhanlin.library_management_system.exceptions.BookNotFoundException;
 import com.zhanlin.library_management_system.mappers.BookMapper;
 import com.zhanlin.library_management_system.models.Book;
 import com.zhanlin.library_management_system.repository.BookRepository;
@@ -19,7 +20,7 @@ public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
 
 
-    public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper, BookService bookService) {
+    public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper) {
         this.bookRepository = bookRepository;
         this.bookMapper = bookMapper;
     }
@@ -27,7 +28,8 @@ public class BookServiceImpl implements BookService {
     //добавить исключение  - > BookNotFoundException
     private Book findBookById(Long id) {
         return bookRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Book with id: " + id + " not found"));
+                .orElseThrow(() -> new  BookNotFoundException(
+                "Book with ID " + id + " not found"));
     }
 
     @Override
@@ -76,11 +78,25 @@ public class BookServiceImpl implements BookService {
                 .stream().map(bookMapper::toDto).toList();
     }
 
+    @Override
+    public List<BookResponseDto> search(String title, String author) {
+        String titleQuery = (title!=null) ? title : "";
+        String authorQuery = (author!=null) ? author : "";
+
+        return bookRepository.findByTitleContainingIgnoreCaseAndAuthorContainingIgnoreCase(titleQuery, authorQuery)
+                .stream()
+                .map(bookMapper::toDto)
+                .toList();
+    }
+
     @Transactional(readOnly = true)
     @Override
     public Optional<BookResponseDto> getBookByIsbn(String isbn) {
         return bookRepository.findByIsbn(isbn).map(bookMapper::toDto);
     }
 
-
+    @Override
+    public List<BookResponseDto> getAllBooks() {
+        return bookRepository.findAll().stream().map(bookMapper::toDto).toList();
+    }
 }
