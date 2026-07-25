@@ -24,7 +24,7 @@ public class BookLoanController {
     }
 
     @PostMapping
-    public ResponseEntity<BookLoanResponseDto> loanBook(@RequestBody @Valid BookLoanRequestDto dto) {
+    public ResponseEntity<BookLoanResponseDto> loanBook(@Valid @RequestBody BookLoanRequestDto dto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(bookLoanService.loanBook(dto));
