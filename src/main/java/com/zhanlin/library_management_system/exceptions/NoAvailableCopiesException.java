@@ -1,7 +1,14 @@
 package com.zhanlin.library_management_system.exceptions;
 
-public class NoAvailableCopiesException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class NoAvailableCopiesException extends LibraryException {
     public NoAvailableCopiesException(String message) {
         super(message);
+    }
+
+    @Override
+    public HttpStatus getStatus() {
+        return HttpStatus.CONFLICT;
     }
 }
