@@ -27,7 +27,7 @@ public class Reader {
     private String phone;
 
     @Column(name = "registration_date")
-    private LocalDate regDate;
+    private LocalDate regDate = LocalDate.now();
 
     @OneToMany(mappedBy = "reader", fetch = FetchType.LAZY)
     private List<BookLoan> loans;

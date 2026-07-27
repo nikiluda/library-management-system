@@ -25,7 +25,7 @@ public class ReaderMapper {
         reader.setFirstName(dto.firstName());
         reader.setLastName(dto.lastName());
         reader.setEmail(dto.email());
-        reader.setPhone(dto.email());
+        reader.setPhone(dto.phone());
 
     }
 
