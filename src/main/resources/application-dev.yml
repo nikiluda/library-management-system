@@ -1,0 +1,11 @@
+spring:
+  output:
+    ansi:
+      enabled: ALWAYS
+
+logging:
+  level:
+    root: INFO
+    com.zhanlin.library_management_system: DEBUG
+    org.springframework: INFO
+    org.hibernate: WARN
