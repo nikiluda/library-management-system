@@ -1,0 +1,6 @@
+logging:
+  level:
+    root: INFO
+    com.zhanlin.library_management_system: INFO
+    org.springframework: WARN
+    org.hibernate: ERROR
