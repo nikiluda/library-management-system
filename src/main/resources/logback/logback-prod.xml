@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+
+    <logger name="com.zhanlin.library_management_system"
+            level="INFO"/>
+
+    <root level="WARN">
+
+        <appender-ref ref="ASYNC_FILE"/>
+
+    </root>
+
+</included>
