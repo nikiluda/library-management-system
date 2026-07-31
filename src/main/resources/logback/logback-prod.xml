@@ -4,9 +4,17 @@
     <logger name="com.zhanlin.library_management_system"
             level="INFO"/>
 
+    <logger name="AUDIT"
+            level="INFO"
+            additivity="false">
+
+        <appender-ref ref="ASYNC_AUDIT"/>
+
+    </logger>
+
     <root level="WARN">
 
-        <appender-ref ref="ASYNC_FILE"/>
+        <appender-ref ref="ASYNC_JSON"/>
 
     </root>
 
