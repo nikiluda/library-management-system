@@ -1,12 +1,19 @@
 package com.zhanlin.library_management_system.exceptions;
 
-import org.springframework.http.HttpStatus;
 
 public abstract class LibraryException extends RuntimeException {
 
-    protected LibraryException(String message) {
+    private final ErrorCode errorCode;
+
+
+    protected LibraryException(ErrorCode errorCode, String message) {
+
         super(message);
+        this.errorCode = errorCode;
     }
 
-    public abstract HttpStatus getStatus();
+    public ErrorCode getErrorCode() {
+        return errorCode;
+    }
+
 }

@@ -2,10 +2,13 @@ package com.zhanlin.library_management_system.service.impl;
 
 import com.zhanlin.library_management_system.dto.book.BookRequestDto;
 import com.zhanlin.library_management_system.dto.book.BookResponseDto;
-import com.zhanlin.library_management_system.exceptions.BookNotFoundException;
+//import com.zhanlin.library_management_system.exceptions.BookNotFoundException;
+import com.zhanlin.library_management_system.exceptions.ErrorCode;
+import com.zhanlin.library_management_system.exceptions.ResourceNotFoundException;
 import com.zhanlin.library_management_system.logging.annotation.Audit;
 import com.zhanlin.library_management_system.logging.annotation.AuditAction;
 import com.zhanlin.library_management_system.mappers.BookMapper;
+import com.zhanlin.library_management_system.messages.ApiErrorMessage;
 import com.zhanlin.library_management_system.models.Book;
 import com.zhanlin.library_management_system.repository.BookRepository;
 
@@ -32,9 +35,10 @@ public class BookServiceImpl implements BookService {
     private Book findBookById(Long id) {
 
         Book book =  bookRepository.findById(id)
-                .orElseThrow(() -> new  BookNotFoundException(
-                "Book with ID " + id + " not found"));
-
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ErrorCode.BOOK_NOT_FOUND,
+                        ApiErrorMessage.BOOK_NOT_FOUND_BY_ID.getMessage(id)
+                ));
         return book;
     }
 

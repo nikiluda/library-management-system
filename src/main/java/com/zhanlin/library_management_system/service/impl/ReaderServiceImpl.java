@@ -2,7 +2,7 @@ package com.zhanlin.library_management_system.service.impl;
 
 import com.zhanlin.library_management_system.dto.reader.ReaderRequestDto;
 import com.zhanlin.library_management_system.dto.reader.ReaderResponseDto;
-import com.zhanlin.library_management_system.exceptions.ReaderNotFoundException;
+//import com.zhanlin.library_management_system.exceptions.ReaderNotFoundException;
 import com.zhanlin.library_management_system.logging.annotation.Audit;
 import com.zhanlin.library_management_system.logging.annotation.AuditAction;
 import com.zhanlin.library_management_system.mappers.ReaderMapper;
@@ -28,10 +28,13 @@ public class ReaderServiceImpl implements ReaderService {
         this.readerMapper = readerMapper;
     }
 
-    private Reader findById(Long id) {
 
-        return readerRepository.findById(id)
-                .orElseThrow(() -> new ReaderNotFoundException("Reader with id: " + id + " not found"));
+    //TODO: исправить
+    private Reader findById(Long id) {
+        return null;
+
+//        return readerRepository.findById(id)
+//                .orElseThrow(() -> new ReaderNotFoundException("Reader with id: " + id + " not found"));
 
     }
 

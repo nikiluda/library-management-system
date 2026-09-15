@@ -3,7 +3,7 @@ package com.zhanlin.library_management_system.controllers;
 
 import com.zhanlin.library_management_system.dto.book.BookRequestDto;
 import com.zhanlin.library_management_system.dto.book.BookResponseDto;
-import com.zhanlin.library_management_system.models.response.ApiMessage;
+import com.zhanlin.library_management_system.messages.ApiMessage;
 import com.zhanlin.library_management_system.models.response.ApiResponse;
 import com.zhanlin.library_management_system.service.BookService;
 import jakarta.validation.Valid;
