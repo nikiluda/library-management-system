@@ -1,4 +1,4 @@
-package com.zhanlin.library_management_system.models.response;
+package com.zhanlin.library_management_system.messages;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

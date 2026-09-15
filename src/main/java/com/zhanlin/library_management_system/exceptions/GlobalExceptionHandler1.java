@@ -17,25 +17,25 @@ import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler1 {
 
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler1.class);
 
-    @ExceptionHandler(LibraryException.class)
-    public ResponseEntity<ErrorResponse> handleLibraryException(LibraryException ex,
-                                                                HttpServletRequest request) {
-        log.warn("Business rule violation on {}: {}", request.getRequestURI(), ex.getMessage());
-
-        ErrorResponse body = new ErrorResponse(
-                LocalDateTime.now(),
-                ex.getStatus().value(),
-                ex.getStatus().getReasonPhrase(),
-                ex.getMessage(),
-                request.getRequestURI()
-        );
-
-        return ResponseEntity.status(ex.getStatus()).body(body);
-    }
+//    @ExceptionHandler(LibraryException.class)
+//    public ResponseEntity<ErrorResponse> handleLibraryException(LibraryException ex,
+//                                                                HttpServletRequest request) {
+//        log.warn("Business rule violation on {}: {}", request.getRequestURI(), ex.getMessage());
+//
+//        ErrorResponse body = new ErrorResponse(
+//                LocalDateTime.now(),
+//                ex.getStatus().value(),
+//                ex.getStatus().getReasonPhrase(),
+//                ex.getMessage(),
+//                request.getRequestURI()
+//        );
+//
+//        return ResponseEntity.status(ex.getStatus()).body(body);
+//    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(

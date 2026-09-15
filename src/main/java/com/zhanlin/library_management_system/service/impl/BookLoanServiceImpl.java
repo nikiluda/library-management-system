@@ -36,23 +36,27 @@ public class BookLoanServiceImpl implements BookLoanService {
         this.bookLoanMapper = bookLoanMapper;
     }
 
-
+    //TODO: исправить
     private Book findBook(Long id) {
-        return bookRepository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException(
-                        "Book with ID " + id + " not found"));
+        return null;
+//        return bookRepository.findById(id)
+//                .orElseThrow(() -> new BookNotFoundException(
+//                        "Book with ID " + id + " not found"));
     }
 
+    //TODO: исправить
     private Reader findReader(Long id) {
-        return readerRepository.findById(id)
-                .orElseThrow(() -> new ReaderNotFoundException(
-                        "Reader with ID " + id + " not found"));
+        return null;
+//        return readerRepository.findById(id)
+//                .orElseThrow(() -> new ReaderNotFoundException(
+//                        "Reader with ID " + id + " not found"));
     }
-
+    //TODO: исправить
     private BookLoan findLoan(Long id) {
-        return bookLoanRepository.findById(id)
-                .orElseThrow(() -> new BookLoanNotFoundException(
-                        "Loan with ID " + id + " not found"));
+        return null;
+//        return bookLoanRepository.findById(id)
+//                .orElseThrow(() -> new BookLoanNotFoundException(
+//                        "Loan with ID " + id + " not found"));
     }
 
     @Override
@@ -62,9 +66,9 @@ public class BookLoanServiceImpl implements BookLoanService {
         Book book = findBook(dto.bookId());
         Reader reader = findReader(dto.readerId());
 
-        if (book.getAvailableCopies() <= 0) {
-            throw new NoAvailableCopiesException("No available copies for book: " + book.getTitle());
-        }
+//        if (book.getAvailableCopies() <= 0) {
+//            throw new NoAvailableCopiesException("No available copies for book: " + book.getTitle());
+//        }
 
         boolean alreadyLoaned = bookLoanRepository
                 .existsByBookIdAndReaderIdAndStatus(
@@ -107,8 +111,9 @@ public class BookLoanServiceImpl implements BookLoanService {
     public BookLoanResponseDto returnBook(Long loanId) {
         BookLoan bookLoan = findLoan(loanId);
 
-        if (bookLoan.getStatus() == BookLoan.LoanStatus.RETURNED)
-            throw new BookAlreadyReturnedException("This book has already been returned");
+        //TODO: исправить
+//        if (bookLoan.getStatus() == BookLoan.LoanStatus.RETURNED)
+//            throw new BookAlreadyReturnedException("This book has already been returned");
 
 
         bookLoan.setReturnDate(LocalDate.now());
