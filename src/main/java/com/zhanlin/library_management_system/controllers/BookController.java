@@ -3,7 +3,9 @@ package com.zhanlin.library_management_system.controllers;
 
 import com.zhanlin.library_management_system.dto.book.BookRequestDto;
 import com.zhanlin.library_management_system.dto.book.BookResponseDto;
-import com.zhanlin.library_management_system.services.book.BookService;
+import com.zhanlin.library_management_system.models.response.ApiMessage;
+import com.zhanlin.library_management_system.models.response.ApiResponse;
+import com.zhanlin.library_management_system.service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,27 +23,39 @@ public class BookController {
         this.bookService = bookService;
     }
 
+    //TODO : переделать под пагинацию
     @GetMapping
     public ResponseEntity<List<BookResponseDto>> getAllBooks() {
         return ResponseEntity.ok(bookService.getAllBooks());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookResponseDto> getBookById(@PathVariable Long id) {
-        return ResponseEntity.ok(bookService.getBookById(id));
+    public ResponseEntity<ApiResponse<BookResponseDto>> getBookById(@PathVariable Long id) {
+        BookResponseDto bookResponseDto = bookService.getBookById(id);
+        return ResponseEntity.ok(ApiResponse.createSuccessful(bookResponseDto));
     }
 
 
     @PostMapping
-    public ResponseEntity<BookResponseDto> createBook( @Valid @RequestBody BookRequestDto dto) {
+    public ResponseEntity<ApiResponse<BookResponseDto>> createBook( @Valid @RequestBody BookRequestDto dto) {
+
+        BookResponseDto bookResponseDto = bookService.createBook(dto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(bookService.createBook(dto));
+                .body(ApiResponse.createSuccessful(
+                        ApiMessage.BOOK_CREATED.getMessage(),
+                        bookResponseDto
+                ));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookResponseDto> updateBook(@PathVariable Long id, @Valid @RequestBody BookRequestDto dto) {
-         return ResponseEntity.ok(bookService.updateBook(id, dto));
+    public ResponseEntity<ApiResponse<BookResponseDto>> updateBook(@PathVariable Long id, @Valid @RequestBody BookRequestDto dto) {
+
+         return ResponseEntity.ok(
+                 ApiResponse.createSuccessful(
+                         ApiMessage.BOOK_UPDATED.getMessage(),
+                         bookService.updateBook(id, dto)
+                 ));
     }
 
     @DeleteMapping("/{id}")
@@ -50,6 +64,7 @@ public class BookController {
         return ResponseEntity.noContent().build();
     }
 
+    //TODO: переделать поиск
     @GetMapping("/search")
     public ResponseEntity<List<BookResponseDto>> search(@RequestParam(required = false) String title,
                                                         @RequestParam(required = false) String author) {

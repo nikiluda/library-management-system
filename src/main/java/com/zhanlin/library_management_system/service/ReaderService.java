@@ -1,4 +1,4 @@
-package com.zhanlin.library_management_system.services.reader;
+package com.zhanlin.library_management_system.service;
 
 import com.zhanlin.library_management_system.dto.reader.ReaderRequestDto;
 import com.zhanlin.library_management_system.dto.reader.ReaderResponseDto;

@@ -1,4 +1,4 @@
-package com.zhanlin.library_management_system.services.reader;
+package com.zhanlin.library_management_system.service.impl;
 
 import com.zhanlin.library_management_system.dto.reader.ReaderRequestDto;
 import com.zhanlin.library_management_system.dto.reader.ReaderResponseDto;
@@ -8,6 +8,7 @@ import com.zhanlin.library_management_system.logging.annotation.AuditAction;
 import com.zhanlin.library_management_system.mappers.ReaderMapper;
 import com.zhanlin.library_management_system.models.Reader;
 import com.zhanlin.library_management_system.repository.ReaderRepository;
+import com.zhanlin.library_management_system.service.ReaderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
