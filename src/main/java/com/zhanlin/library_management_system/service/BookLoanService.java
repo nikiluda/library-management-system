@@ -1,4 +1,4 @@
-package com.zhanlin.library_management_system.services.bookLoan;
+package com.zhanlin.library_management_system.service;
 
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanRequestDto;
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanResponseDto;

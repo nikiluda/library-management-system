@@ -1,4 +1,4 @@
-package com.zhanlin.library_management_system.services.book;
+package com.zhanlin.library_management_system.service.impl;
 
 import com.zhanlin.library_management_system.dto.book.BookRequestDto;
 import com.zhanlin.library_management_system.dto.book.BookResponseDto;
@@ -9,6 +9,7 @@ import com.zhanlin.library_management_system.mappers.BookMapper;
 import com.zhanlin.library_management_system.models.Book;
 import com.zhanlin.library_management_system.repository.BookRepository;
 
+import com.zhanlin.library_management_system.service.BookService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

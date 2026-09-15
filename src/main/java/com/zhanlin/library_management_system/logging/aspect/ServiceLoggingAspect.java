@@ -13,7 +13,7 @@ public class ServiceLoggingAspect {
     private static final Logger log = LoggerFactory.getLogger(ServiceLoggingAspect.class);
 
 
-    @Around("execution(* com.zhanlin.library_management_system.services..*(..))")
+    @Around("execution(* com.zhanlin.library_management_system.service..*(..))")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
 
         String className = joinPoint.getTarget().getClass().getSimpleName();

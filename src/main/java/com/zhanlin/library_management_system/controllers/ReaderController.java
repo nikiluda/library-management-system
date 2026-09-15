@@ -2,7 +2,10 @@ package com.zhanlin.library_management_system.controllers;
 
 import com.zhanlin.library_management_system.dto.reader.ReaderRequestDto;
 import com.zhanlin.library_management_system.dto.reader.ReaderResponseDto;
-import com.zhanlin.library_management_system.services.reader.ReaderService;
+import com.zhanlin.library_management_system.models.response.ApiMessage;
+import com.zhanlin.library_management_system.models.response.ApiResponse;
+import com.zhanlin.library_management_system.service.BookService;
+import com.zhanlin.library_management_system.service.ReaderService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,27 +23,38 @@ public class ReaderController {
         this.readerService = readerService;
     }
 
+    //TODO: переделать под пагинацию
     @GetMapping
     public ResponseEntity<List<ReaderResponseDto>> getAllReaders() {
         return ResponseEntity.ok(readerService.getAllReaders());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReaderResponseDto> getReaderById(@PathVariable Long id) {
-        return ResponseEntity.ok(readerService.getReaderById(id));
+    public ResponseEntity<ApiResponse<ReaderResponseDto>> getReaderById(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                ApiResponse.createSuccessful(readerService.getReaderById(id))
+        );
     }
 
     @PostMapping
-    public ResponseEntity<ReaderResponseDto> createReader(@RequestBody @Valid ReaderRequestDto dto) {
+    public ResponseEntity<ApiResponse<ReaderResponseDto>> createReader(@RequestBody @Valid ReaderRequestDto dto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(readerService.createReader(dto));
+                .body(ApiResponse.createSuccessful(
+                        ApiMessage.READER_CREATED.getMessage(),
+                        readerService.createReader(dto)
+                ));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ReaderResponseDto> updateReader(@RequestBody @Valid ReaderRequestDto dto,
+    public ResponseEntity<ApiResponse<ReaderResponseDto>> updateReader(@RequestBody @Valid ReaderRequestDto dto,
                                                           @PathVariable Long id) {
-         return ResponseEntity.ok(readerService.updateReader(id, dto));
+         return ResponseEntity.ok(
+                 ApiResponse.createSuccessful(
+                         ApiMessage.READER_UPDATED.getMessage(),
+                         readerService.updateReader(id, dto)
+                 )
+         );
     }
 
     @DeleteMapping("/{id}")

@@ -15,4 +15,10 @@ public interface BookLoanRepository extends JpaRepository<BookLoan, Long> {
             BookLoan.LoanStatus status,
             LocalDate today
     );
+
+    boolean existsByBookIdAndReaderIdAndStatus(
+            Long bookId,
+            Long readerId,
+            BookLoan.LoanStatus status
+    );
 }

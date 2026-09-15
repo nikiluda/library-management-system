@@ -1,4 +1,4 @@
-package com.zhanlin.library_management_system.services.bookLoan;
+package com.zhanlin.library_management_system.service.impl;
 
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanRequestDto;
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanResponseDto;
@@ -13,6 +13,7 @@ import com.zhanlin.library_management_system.repository.BookLoanRepository;
 import com.zhanlin.library_management_system.repository.BookRepository;
 import com.zhanlin.library_management_system.repository.ReaderRepository;
 
+import com.zhanlin.library_management_system.service.BookLoanService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,7 @@ import java.util.List;
 
 @Service
 @Transactional
-public class BookLoanServiceImpl implements BookLoanService{
+public class BookLoanServiceImpl implements BookLoanService {
 
     private final BookLoanRepository bookLoanRepository;
     private final BookRepository bookRepository;
@@ -60,8 +61,22 @@ public class BookLoanServiceImpl implements BookLoanService{
 
         Book book = findBook(dto.bookId());
         Reader reader = findReader(dto.readerId());
+
         if (book.getAvailableCopies() <= 0) {
             throw new NoAvailableCopiesException("No available copies for book: " + book.getTitle());
+        }
+
+        boolean alreadyLoaned = bookLoanRepository
+                .existsByBookIdAndReaderIdAndStatus(
+                        dto.bookId(),
+                        dto.readerId(),
+                        BookLoan.LoanStatus.ACTIVE
+                );
+
+        if (alreadyLoaned) {
+            throw new ActiveLoanExistsException(
+                    "Reader already has an active loan for this book"
+            );
         }
 
         book.setAvailableCopies(

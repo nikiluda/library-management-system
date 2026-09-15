@@ -3,8 +3,9 @@ package com.zhanlin.library_management_system.controllers;
 
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanRequestDto;
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanResponseDto;
-import com.zhanlin.library_management_system.services.bookLoan.BookLoanService;
-import com.zhanlin.library_management_system.services.reader.ReaderService;
+import com.zhanlin.library_management_system.models.response.ApiMessage;
+import com.zhanlin.library_management_system.models.response.ApiResponse;
+import com.zhanlin.library_management_system.service.BookLoanService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,28 +25,40 @@ public class BookLoanController {
     }
 
     @PostMapping
-    public ResponseEntity<BookLoanResponseDto> loanBook(@Valid @RequestBody BookLoanRequestDto dto) {
+    public ResponseEntity<ApiResponse<BookLoanResponseDto>> loanBook(@Valid @RequestBody BookLoanRequestDto dto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(bookLoanService.loanBook(dto));
+                .body(ApiResponse.createSuccessful(
+                        ApiMessage.BOOK_LOAN_CREATED.getMessage(),
+                        bookLoanService.loanBook(dto)
+                ));
 
     }
 
     @PutMapping("/{id}/return")
-    public ResponseEntity<BookLoanResponseDto> returnBook(@PathVariable Long id) {
-        return ResponseEntity.ok(bookLoanService.returnBook(id));
+    public ResponseEntity<ApiResponse<BookLoanResponseDto>> returnBook(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                ApiResponse.createSuccessful(
+                        ApiMessage.BOOK_RETURNED.getMessage(),
+                        bookLoanService.returnBook(id)
+                )
+        );
     }
 
+    //TODO: изменить под пагинацию и ResponsePagination
     @GetMapping("/reader/{readerId}")
-    public ResponseEntity<List<BookLoanResponseDto>> getLoansByReader(@PathVariable Long readerId) {
-        return ResponseEntity.ok(bookLoanService.getLoansByReader(readerId));
+    public ResponseEntity<ApiResponse<List<BookLoanResponseDto>>> getLoansByReader(@PathVariable Long readerId) {
+        return ResponseEntity.ok(ApiResponse.createSuccessful(bookLoanService.getLoansByReader(readerId)));
     }
 
+
+    //TODO: изменить под пагинацию и ResponsePagination
     @GetMapping("/overdue")
     public ResponseEntity<List<BookLoanResponseDto>> getOverdueLoans() {
         return ResponseEntity.ok(bookLoanService.getOverdueLoans());
     }
 
+    //TODO: изменить под пагинацию и ResponsePagination
     @GetMapping
     public ResponseEntity<List<BookLoanResponseDto>> getAllLoans() {
         return ResponseEntity.ok(bookLoanService.getAllLoans());
