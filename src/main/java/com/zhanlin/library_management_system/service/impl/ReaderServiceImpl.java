@@ -2,10 +2,13 @@ package com.zhanlin.library_management_system.service.impl;
 
 import com.zhanlin.library_management_system.dto.reader.ReaderRequestDto;
 import com.zhanlin.library_management_system.dto.reader.ReaderResponseDto;
-//import com.zhanlin.library_management_system.exceptions.ReaderNotFoundException;
+import com.zhanlin.library_management_system.exceptions.ErrorCode;
+import com.zhanlin.library_management_system.exceptions.ResourceAlreadyExistsException;
+import com.zhanlin.library_management_system.exceptions.ResourceNotFoundException;
 import com.zhanlin.library_management_system.logging.annotation.Audit;
 import com.zhanlin.library_management_system.logging.annotation.AuditAction;
 import com.zhanlin.library_management_system.mappers.ReaderMapper;
+import com.zhanlin.library_management_system.messages.ApiErrorMessage;
 import com.zhanlin.library_management_system.models.Reader;
 import com.zhanlin.library_management_system.repository.ReaderRepository;
 import com.zhanlin.library_management_system.service.ReaderService;
@@ -29,12 +32,14 @@ public class ReaderServiceImpl implements ReaderService {
     }
 
 
-    //TODO: исправить
     private Reader findById(Long id) {
-        return null;
+        Reader reader = readerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ErrorCode.READER_NOT_FOUND,
+                        ApiErrorMessage.READER_NOT_FOUND_BY_ID.getMessage(id)
+                ));
 
-//        return readerRepository.findById(id)
-//                .orElseThrow(() -> new ReaderNotFoundException("Reader with id: " + id + " not found"));
+        return reader;
 
     }
 
@@ -42,6 +47,13 @@ public class ReaderServiceImpl implements ReaderService {
     @Override
     @Audit(AuditAction.READER_CREATED)
     public ReaderResponseDto createReader(ReaderRequestDto dto) {
+
+        if (readerRepository.existsByEmail(dto.email())) {
+            throw new ResourceAlreadyExistsException(
+                    ErrorCode.EMAIL_ALREADY_EXISTS,
+                    ApiErrorMessage.EMAIL_ALREADY_EXISTS.getMessage(dto.email())
+            );
+        }
 
         Reader reader = readerMapper.toEntity(dto);
         Reader savedReader = readerRepository.save(reader);
@@ -61,8 +73,15 @@ public class ReaderServiceImpl implements ReaderService {
     @Override
     @Audit(AuditAction.READER_UPDATED)
     public ReaderResponseDto updateReader(Long id, ReaderRequestDto dto) {
-
         Reader reader = findById(id);
+
+        if (!reader.getEmail().equals(dto.email()) && readerRepository.existsByEmail(dto.email())) {
+            throw new ResourceAlreadyExistsException(
+                    ErrorCode.EMAIL_ALREADY_EXISTS,
+                    ApiErrorMessage.EMAIL_ALREADY_EXISTS.getMessage(dto.email())
+            );
+        }
+
         readerMapper.updateReader(dto, reader);
         Reader updatedReader = readerRepository.save(reader);
         return readerMapper.toDto(updatedReader);

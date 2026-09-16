@@ -6,6 +6,7 @@ import com.zhanlin.library_management_system.exceptions.*;
 import com.zhanlin.library_management_system.logging.annotation.Audit;
 import com.zhanlin.library_management_system.logging.annotation.AuditAction;
 import com.zhanlin.library_management_system.mappers.BookLoanMapper;
+import com.zhanlin.library_management_system.messages.ApiErrorMessage;
 import com.zhanlin.library_management_system.models.Book;
 import com.zhanlin.library_management_system.models.BookLoan;
 import com.zhanlin.library_management_system.models.Reader;
@@ -36,27 +37,35 @@ public class BookLoanServiceImpl implements BookLoanService {
         this.bookLoanMapper = bookLoanMapper;
     }
 
-    //TODO: исправить
     private Book findBook(Long id) {
-        return null;
-//        return bookRepository.findById(id)
-//                .orElseThrow(() -> new BookNotFoundException(
-//                        "Book with ID " + id + " not found"));
+        Book book =  bookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ErrorCode.BOOK_NOT_FOUND,
+                        ApiErrorMessage.BOOK_NOT_FOUND_BY_ID.getMessage(id)
+                ));
+        return book;
     }
 
-    //TODO: исправить
     private Reader findReader(Long id) {
-        return null;
-//        return readerRepository.findById(id)
-//                .orElseThrow(() -> new ReaderNotFoundException(
-//                        "Reader with ID " + id + " not found"));
+        Reader reader = readerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ErrorCode.READER_NOT_FOUND,
+                        ApiErrorMessage.READER_NOT_FOUND_BY_ID.getMessage(id)
+                ));
+
+        return reader;
     }
-    //TODO: исправить
+
     private BookLoan findLoan(Long id) {
-        return null;
-//        return bookLoanRepository.findById(id)
-//                .orElseThrow(() -> new BookLoanNotFoundException(
-//                        "Loan with ID " + id + " not found"));
+
+        BookLoan bookLoan = bookLoanRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ErrorCode.LOAN_NOT_FOUND,
+                        ApiErrorMessage.LOAN_NOT_FOUND_BY_ID.getMessage(id))
+                );
+
+        return bookLoan;
+
     }
 
     @Override
@@ -66,9 +75,12 @@ public class BookLoanServiceImpl implements BookLoanService {
         Book book = findBook(dto.bookId());
         Reader reader = findReader(dto.readerId());
 
-//        if (book.getAvailableCopies() <= 0) {
-//            throw new NoAvailableCopiesException("No available copies for book: " + book.getTitle());
-//        }
+        if (book.getAvailableCopies() <= 0) {
+            throw new BusinessRuleException(
+                    ErrorCode.NO_AVAILABLE_COPIES,
+                    ApiErrorMessage.NO_AVAILABLE_COPIES.getMessage(book.getTitle())
+            );
+        }
 
         boolean alreadyLoaned = bookLoanRepository
                 .existsByBookIdAndReaderIdAndStatus(
@@ -78,8 +90,9 @@ public class BookLoanServiceImpl implements BookLoanService {
                 );
 
         if (alreadyLoaned) {
-            throw new ActiveLoanExistsException(
-                    "Reader already has an active loan for this book"
+            throw new BusinessRuleException(
+                    ErrorCode.ACTIVE_LOAN_EXISTS,
+                    ApiErrorMessage.ACTIVE_LOAN_EXISTS.getMessage()
             );
         }
 
@@ -111,9 +124,12 @@ public class BookLoanServiceImpl implements BookLoanService {
     public BookLoanResponseDto returnBook(Long loanId) {
         BookLoan bookLoan = findLoan(loanId);
 
-        //TODO: исправить
-//        if (bookLoan.getStatus() == BookLoan.LoanStatus.RETURNED)
-//            throw new BookAlreadyReturnedException("This book has already been returned");
+
+        if (bookLoan.getStatus() == BookLoan.LoanStatus.RETURNED)
+            throw new BusinessRuleException(
+                    ErrorCode.LOAN_ALREADY_RETURNED,
+                    ApiErrorMessage.LOAN_ALREADY_RETURNED.getMessage(loanId)
+            );
 
 
         bookLoan.setReturnDate(LocalDate.now());
