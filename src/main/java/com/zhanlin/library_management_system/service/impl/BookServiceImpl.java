@@ -4,6 +4,7 @@ import com.zhanlin.library_management_system.dto.book.BookRequestDto;
 import com.zhanlin.library_management_system.dto.book.BookResponseDto;
 //import com.zhanlin.library_management_system.exceptions.BookNotFoundException;
 import com.zhanlin.library_management_system.exceptions.ErrorCode;
+import com.zhanlin.library_management_system.exceptions.ResourceAlreadyExistsException;
 import com.zhanlin.library_management_system.exceptions.ResourceNotFoundException;
 import com.zhanlin.library_management_system.logging.annotation.Audit;
 import com.zhanlin.library_management_system.logging.annotation.AuditAction;
@@ -46,6 +47,13 @@ public class BookServiceImpl implements BookService {
     @Audit(AuditAction.BOOK_CREATED)
     public BookResponseDto createBook(BookRequestDto dto) {
 
+        if (bookRepository.existsByIsbn(dto.isbn())) {
+            throw new ResourceAlreadyExistsException(
+                    ErrorCode.ISBN_ALREADY_EXISTS,
+                    ApiErrorMessage.ISBN_ALREADY_EXISTS.getMessage(dto.isbn())
+            );
+        }
+
         Book book = bookMapper.toEntity(dto);
         Book savedBook = bookRepository.save(book);
         return bookMapper.toDto(savedBook);
@@ -54,7 +62,10 @@ public class BookServiceImpl implements BookService {
     @Override
     @Audit(AuditAction.BOOK_UPDATED)
     public BookResponseDto updateBook(Long id, BookRequestDto dto) {
+
         Book book = findBookById(id);
+
+        if (!book.getIsbn().equals(dto.isbn()) && bookRepository.existsByIsbn(dto.isbn())) { throw new ResourceAlreadyExistsException( ErrorCode.ISBN_ALREADY_EXISTS, ApiErrorMessage.ISBN_ALREADY_EXISTS.getMessage(dto.isbn()) ); }
 
         bookMapper.updateBook(dto, book);
 

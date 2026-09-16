@@ -3,6 +3,7 @@ package com.zhanlin.library_management_system.service.impl;
 import com.zhanlin.library_management_system.dto.reader.ReaderRequestDto;
 import com.zhanlin.library_management_system.dto.reader.ReaderResponseDto;
 import com.zhanlin.library_management_system.exceptions.ErrorCode;
+import com.zhanlin.library_management_system.exceptions.ResourceAlreadyExistsException;
 import com.zhanlin.library_management_system.exceptions.ResourceNotFoundException;
 import com.zhanlin.library_management_system.logging.annotation.Audit;
 import com.zhanlin.library_management_system.logging.annotation.AuditAction;
@@ -47,6 +48,13 @@ public class ReaderServiceImpl implements ReaderService {
     @Audit(AuditAction.READER_CREATED)
     public ReaderResponseDto createReader(ReaderRequestDto dto) {
 
+        if (readerRepository.existsByEmail(dto.email())) {
+            throw new ResourceAlreadyExistsException(
+                    ErrorCode.EMAIL_ALREADY_EXISTS,
+                    ApiErrorMessage.EMAIL_ALREADY_EXISTS.getMessage(dto.email())
+            );
+        }
+
         Reader reader = readerMapper.toEntity(dto);
         Reader savedReader = readerRepository.save(reader);
 
@@ -65,8 +73,15 @@ public class ReaderServiceImpl implements ReaderService {
     @Override
     @Audit(AuditAction.READER_UPDATED)
     public ReaderResponseDto updateReader(Long id, ReaderRequestDto dto) {
-
         Reader reader = findById(id);
+
+        if (!reader.getEmail().equals(dto.email()) && readerRepository.existsByEmail(dto.email())) {
+            throw new ResourceAlreadyExistsException(
+                    ErrorCode.EMAIL_ALREADY_EXISTS,
+                    ApiErrorMessage.EMAIL_ALREADY_EXISTS.getMessage(dto.email())
+            );
+        }
+
         readerMapper.updateReader(dto, reader);
         Reader updatedReader = readerRepository.save(reader);
         return readerMapper.toDto(updatedReader);

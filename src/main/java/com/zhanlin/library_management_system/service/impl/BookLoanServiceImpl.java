@@ -60,9 +60,9 @@ public class BookLoanServiceImpl implements BookLoanService {
 
         BookLoan bookLoan = bookLoanRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        ErrorCode.READER_NOT_FOUND,
-                        ApiErrorMessage.READER_NOT_FOUND_BY_ID.getMessage(id)
-                ));
+                        ErrorCode.LOAN_NOT_FOUND,
+                        ApiErrorMessage.LOAN_NOT_FOUND_BY_ID.getMessage(id))
+                );
 
         return bookLoan;
 
@@ -75,9 +75,12 @@ public class BookLoanServiceImpl implements BookLoanService {
         Book book = findBook(dto.bookId());
         Reader reader = findReader(dto.readerId());
 
-//        if (book.getAvailableCopies() <= 0) {
-//            throw new NoAvailableCopiesException("No available copies for book: " + book.getTitle());
-//        }
+        if (book.getAvailableCopies() <= 0) {
+            throw new BusinessRuleException(
+                    ErrorCode.NO_AVAILABLE_COPIES,
+                    ApiErrorMessage.NO_AVAILABLE_COPIES.getMessage(book.getTitle())
+            );
+        }
 
         boolean alreadyLoaned = bookLoanRepository
                 .existsByBookIdAndReaderIdAndStatus(
@@ -87,8 +90,9 @@ public class BookLoanServiceImpl implements BookLoanService {
                 );
 
         if (alreadyLoaned) {
-            throw new ActiveLoanExistsException(
-                    "Reader already has an active loan for this book"
+            throw new BusinessRuleException(
+                    ErrorCode.ACTIVE_LOAN_EXISTS,
+                    ApiErrorMessage.ACTIVE_LOAN_EXISTS.getMessage()
             );
         }
 
@@ -120,9 +124,12 @@ public class BookLoanServiceImpl implements BookLoanService {
     public BookLoanResponseDto returnBook(Long loanId) {
         BookLoan bookLoan = findLoan(loanId);
 
-        //TODO: исправить
-//        if (bookLoan.getStatus() == BookLoan.LoanStatus.RETURNED)
-//            throw new BookAlreadyReturnedException("This book has already been returned");
+
+        if (bookLoan.getStatus() == BookLoan.LoanStatus.RETURNED)
+            throw new BusinessRuleException(
+                    ErrorCode.LOAN_ALREADY_RETURNED,
+                    ApiErrorMessage.LOAN_ALREADY_RETURNED.getMessage(loanId)
+            );
 
 
         bookLoan.setReturnDate(LocalDate.now());
