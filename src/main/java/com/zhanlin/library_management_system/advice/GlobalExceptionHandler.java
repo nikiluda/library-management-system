@@ -2,8 +2,11 @@ package com.zhanlin.library_management_system.advice;
 
 
 import com.zhanlin.library_management_system.exceptions.BusinessRuleException;
+import com.zhanlin.library_management_system.exceptions.ErrorCode;
 import com.zhanlin.library_management_system.exceptions.ResourceAlreadyExistsException;
 import com.zhanlin.library_management_system.exceptions.ResourceNotFoundException;
+import jakarta.validation.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -71,7 +74,7 @@ public class GlobalExceptionHandler {
 
         problemDetail.setTitle("Validation failed");
         problemDetail.setDetail("One or more fields are invalid");
-        problemDetail.setProperty("code", "VALIDATION_ERROR");
+        problemDetail.setProperty("code", ErrorCode.VALIDATION_ERROR.name());
 
         List<FieldViolation> errors = exception.getBindingResult()
                 .getFieldErrors()
@@ -98,7 +101,7 @@ public class GlobalExceptionHandler {
 
         problemDetail.setTitle("Malformed request");
         problemDetail.setDetail("Request body is invalid");
-        problemDetail.setProperty("code", "MALFORMED_REQUEST");
+        problemDetail.setProperty("code", ErrorCode.MALFORMED_REQUEST.name());
 
         return problemDetail;
     }
@@ -111,9 +114,37 @@ public class GlobalExceptionHandler {
 
         problemDetail.setTitle("Internal server error");
         problemDetail.setDetail("An unexpected error occurred");
-        problemDetail.setProperty("code", "INTERNAL_ERROR");
+        problemDetail.setProperty("code", ErrorCode.INTERNAL_ERROR.name());
 
         return problemDetail;
     }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ProblemDetail handleDataIntegrityViolation(DataIntegrityViolationException exception) {
+
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+
+        problemDetail.setTitle("Data integrity violation");
+        problemDetail.setDetail("The request conflicts with existing data");
+        problemDetail.setProperty("code", ErrorCode.DATA_INTEGRITY_VIOLATION.name());
+
+        return problemDetail;
+
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ProblemDetail handleConstraintViolation(ConstraintViolationException exception) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+
+        problemDetail.setTitle("Validation failed");
+        problemDetail.setDetail("One or more parameters are invalid");
+        problemDetail.setProperty(
+                "code",
+                ErrorCode.VALIDATION_ERROR.name()
+        );
+
+        return problemDetail;
+    }
+
 
 }

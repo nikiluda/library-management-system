@@ -11,4 +11,6 @@ import java.util.List;
 public interface ReaderRepository extends JpaRepository<Reader, Long> {
 
     boolean existsByEmail(String email);
+
+    boolean existsByPhone(String phone);
 }

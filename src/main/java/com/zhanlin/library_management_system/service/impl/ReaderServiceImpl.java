@@ -55,6 +55,13 @@ public class ReaderServiceImpl implements ReaderService {
             );
         }
 
+        if (readerRepository.existsByPhone(dto.phone())) {
+            throw new ResourceAlreadyExistsException(
+                    ErrorCode.PHONE_ALREADY_EXISTS,
+                    ApiErrorMessage.PHONE_ALREADY_EXISTS.getMessage(dto.phone())
+            );
+        }
+
         Reader reader = readerMapper.toEntity(dto);
         Reader savedReader = readerRepository.save(reader);
 
@@ -79,6 +86,13 @@ public class ReaderServiceImpl implements ReaderService {
             throw new ResourceAlreadyExistsException(
                     ErrorCode.EMAIL_ALREADY_EXISTS,
                     ApiErrorMessage.EMAIL_ALREADY_EXISTS.getMessage(dto.email())
+            );
+        }
+
+        if (!reader.getPhone().equals(dto.phone()) && readerRepository.existsByPhone(dto.phone())) {
+            throw new ResourceAlreadyExistsException(
+                    ErrorCode.PHONE_ALREADY_EXISTS,
+                    ApiErrorMessage.PHONE_ALREADY_EXISTS.getMessage(dto.phone())
             );
         }
 

@@ -13,6 +13,7 @@ public enum ApiErrorMessage {
 
     ISBN_ALREADY_EXISTS("Book with ISBN: %s already exists"),
     EMAIL_ALREADY_EXISTS("Reader with email: %s already exists"),
+    PHONE_ALREADY_EXISTS("Reader with phone: %s already exists"),
 
     NO_AVAILABLE_COPIES("No available copies for book: %s"),
     ACTIVE_LOAN_EXISTS("Reader already has an active loan for this book"),
