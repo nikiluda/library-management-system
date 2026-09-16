@@ -2,10 +2,12 @@ package com.zhanlin.library_management_system.service.impl;
 
 import com.zhanlin.library_management_system.dto.reader.ReaderRequestDto;
 import com.zhanlin.library_management_system.dto.reader.ReaderResponseDto;
-//import com.zhanlin.library_management_system.exceptions.ReaderNotFoundException;
+import com.zhanlin.library_management_system.exceptions.ErrorCode;
+import com.zhanlin.library_management_system.exceptions.ResourceNotFoundException;
 import com.zhanlin.library_management_system.logging.annotation.Audit;
 import com.zhanlin.library_management_system.logging.annotation.AuditAction;
 import com.zhanlin.library_management_system.mappers.ReaderMapper;
+import com.zhanlin.library_management_system.messages.ApiErrorMessage;
 import com.zhanlin.library_management_system.models.Reader;
 import com.zhanlin.library_management_system.repository.ReaderRepository;
 import com.zhanlin.library_management_system.service.ReaderService;
@@ -29,12 +31,14 @@ public class ReaderServiceImpl implements ReaderService {
     }
 
 
-    //TODO: исправить
     private Reader findById(Long id) {
-        return null;
+        Reader reader = readerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ErrorCode.READER_NOT_FOUND,
+                        ApiErrorMessage.READER_NOT_FOUND_BY_ID.getMessage(id)
+                ));
 
-//        return readerRepository.findById(id)
-//                .orElseThrow(() -> new ReaderNotFoundException("Reader with id: " + id + " not found"));
+        return reader;
 
     }
 

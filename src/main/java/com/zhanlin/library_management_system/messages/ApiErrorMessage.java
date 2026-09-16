@@ -7,7 +7,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ApiErrorMessage {
 
-    BOOK_NOT_FOUND_BY_ID("Book with ID %s was not found");
+    BOOK_NOT_FOUND_BY_ID("Book with ID %s was not found"),
+    READER_NOT_FOUND_BY_ID("Reader with ID %s was not found"),
+    LOAN_NOT_FOUND_BY_ID("Loan with ID: %s was not found")
+    ;
 
     private final String message;
 

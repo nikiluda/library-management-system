@@ -6,6 +6,7 @@ import com.zhanlin.library_management_system.exceptions.*;
 import com.zhanlin.library_management_system.logging.annotation.Audit;
 import com.zhanlin.library_management_system.logging.annotation.AuditAction;
 import com.zhanlin.library_management_system.mappers.BookLoanMapper;
+import com.zhanlin.library_management_system.messages.ApiErrorMessage;
 import com.zhanlin.library_management_system.models.Book;
 import com.zhanlin.library_management_system.models.BookLoan;
 import com.zhanlin.library_management_system.models.Reader;
@@ -36,27 +37,35 @@ public class BookLoanServiceImpl implements BookLoanService {
         this.bookLoanMapper = bookLoanMapper;
     }
 
-    //TODO: исправить
     private Book findBook(Long id) {
-        return null;
-//        return bookRepository.findById(id)
-//                .orElseThrow(() -> new BookNotFoundException(
-//                        "Book with ID " + id + " not found"));
+        Book book =  bookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ErrorCode.BOOK_NOT_FOUND,
+                        ApiErrorMessage.BOOK_NOT_FOUND_BY_ID.getMessage(id)
+                ));
+        return book;
     }
 
-    //TODO: исправить
     private Reader findReader(Long id) {
-        return null;
-//        return readerRepository.findById(id)
-//                .orElseThrow(() -> new ReaderNotFoundException(
-//                        "Reader with ID " + id + " not found"));
+        Reader reader = readerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ErrorCode.READER_NOT_FOUND,
+                        ApiErrorMessage.READER_NOT_FOUND_BY_ID.getMessage(id)
+                ));
+
+        return reader;
     }
-    //TODO: исправить
+
     private BookLoan findLoan(Long id) {
-        return null;
-//        return bookLoanRepository.findById(id)
-//                .orElseThrow(() -> new BookLoanNotFoundException(
-//                        "Loan with ID " + id + " not found"));
+
+        BookLoan bookLoan = bookLoanRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ErrorCode.READER_NOT_FOUND,
+                        ApiErrorMessage.READER_NOT_FOUND_BY_ID.getMessage(id)
+                ));
+
+        return bookLoan;
+
     }
 
     @Override
