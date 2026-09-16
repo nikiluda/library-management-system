@@ -13,6 +13,7 @@ public abstract class LibraryException extends RuntimeException {
     }
 
     public ErrorCode getErrorCode() {
+
         return errorCode;
     }
 

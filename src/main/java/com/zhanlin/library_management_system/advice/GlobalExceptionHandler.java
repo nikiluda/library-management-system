@@ -1,10 +1,8 @@
 package com.zhanlin.library_management_system.advice;
 
 
-import com.zhanlin.library_management_system.exceptions.BusinessRuleException;
-import com.zhanlin.library_management_system.exceptions.ErrorCode;
-import com.zhanlin.library_management_system.exceptions.ResourceAlreadyExistsException;
-import com.zhanlin.library_management_system.exceptions.ResourceNotFoundException;
+import com.zhanlin.library_management_system.exceptions.*;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -14,67 +12,60 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.net.URI;
 import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private ProblemDetail createProblem(
+            HttpStatus status,
+            String title,
+            String detail,
+            ErrorCode errorCode,
+            HttpServletRequest request
+    ) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(status);
 
-
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ProblemDetail handleResourceNotFound(ResourceNotFoundException exception) {
-
-        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
-
-        problemDetail.setTitle("Resource not found");
-        problemDetail.setDetail(exception.getMessage());
-        problemDetail.setProperty(
-                "code",
-                exception.getErrorCode().name()
+        problemDetail.setTitle(title);
+        problemDetail.setDetail(detail);
+        problemDetail.setInstance(
+                URI.create(request.getRequestURI())
         );
-
-        return problemDetail;
-
-    }
-
-    @ExceptionHandler(ResourceAlreadyExistsException.class)
-    public ProblemDetail handleResourceAlreadyExists(ResourceAlreadyExistsException exception) {
-
-        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
-
-        problemDetail.setTitle("Resource already exists");
-        problemDetail.setDetail(exception.getMessage());
         problemDetail.setProperty(
                 "code",
-                exception.getErrorCode().name()
+                errorCode.name()
         );
 
         return problemDetail;
     }
 
-    @ExceptionHandler(BusinessRuleException.class)
-    public ProblemDetail handleBusinessRule(BusinessRuleException exception) {
+    @ExceptionHandler(LibraryException.class)
+    public ProblemDetail handleLibraryException(LibraryException exception, HttpServletRequest request) {
 
-        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        ErrorCode errorCode = exception.getErrorCode();
 
-        problemDetail.setTitle("Business rule violation");
-        problemDetail.setDetail(exception.getMessage());
-        problemDetail.setProperty(
-                "code",
-                exception.getErrorCode().name()
+        return createProblem(
+                errorCode.getStatus(),
+                "Library error",
+                exception.getMessage(),
+                errorCode,
+                request
         );
-
-        return problemDetail;
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ProblemDetail handleValidation(MethodArgumentNotValidException exception) {
-
-        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-
-        problemDetail.setTitle("Validation failed");
-        problemDetail.setDetail("One or more fields are invalid");
-        problemDetail.setProperty("code", ErrorCode.VALIDATION_ERROR.name());
+    public ProblemDetail handleValidation(
+            MethodArgumentNotValidException exception,
+            HttpServletRequest request
+    ) {
+        ProblemDetail problemDetail = createProblem(
+                HttpStatus.BAD_REQUEST,
+                "Validation failed",
+                "One or more fields are invalid",
+                ErrorCode.VALIDATION_ERROR,
+                request
+        );
 
         List<FieldViolation> errors = exception.getBindingResult()
                 .getFieldErrors()
@@ -93,58 +84,58 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ProblemDetail handleMalformedRequest(
-            HttpMessageNotReadableException exception
+            HttpMessageNotReadableException exception,
+            HttpServletRequest request
     ) {
-
-        ProblemDetail problemDetail =
-                ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-
-        problemDetail.setTitle("Malformed request");
-        problemDetail.setDetail("Request body is invalid");
-        problemDetail.setProperty("code", ErrorCode.MALFORMED_REQUEST.name());
-
-        return problemDetail;
+        return createProblem(
+                HttpStatus.BAD_REQUEST,
+                "Malformed request",
+                "Request body is invalid",
+                ErrorCode.MALFORMED_REQUEST,
+                request
+        );
     }
 
     @ExceptionHandler(Exception.class)
-    public ProblemDetail handleUnexpectedException(Exception exception) {
-
-        ProblemDetail problemDetail =
-                ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-
-        problemDetail.setTitle("Internal server error");
-        problemDetail.setDetail("An unexpected error occurred");
-        problemDetail.setProperty("code", ErrorCode.INTERNAL_ERROR.name());
-
-        return problemDetail;
+    public ProblemDetail handleUnexpectedException(
+            Exception exception,
+            HttpServletRequest request
+    ) {
+        return createProblem(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Internal server error",
+                "An unexpected error occurred",
+                ErrorCode.INTERNAL_ERROR,
+                request
+        );
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ProblemDetail handleDataIntegrityViolation(DataIntegrityViolationException exception) {
+    public ProblemDetail handleDataIntegrityViolation(DataIntegrityViolationException exception,
+                                                      HttpServletRequest request) {
 
-        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
-
-        problemDetail.setTitle("Data integrity violation");
-        problemDetail.setDetail("The request conflicts with existing data");
-        problemDetail.setProperty("code", ErrorCode.DATA_INTEGRITY_VIOLATION.name());
-
-        return problemDetail;
+        return createProblem(
+                HttpStatus.CONFLICT,
+                "Data integrity violation",
+                "The request conflicts with existing data",
+                ErrorCode.DATA_INTEGRITY_VIOLATION,
+                request
+        );
 
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ProblemDetail handleConstraintViolation(ConstraintViolationException exception) {
-        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-
-        problemDetail.setTitle("Validation failed");
-        problemDetail.setDetail("One or more parameters are invalid");
-        problemDetail.setProperty(
-                "code",
-                ErrorCode.VALIDATION_ERROR.name()
+    public ProblemDetail handleConstraintViolation(ConstraintViolationException exception, HttpServletRequest request) {
+        return createProblem(
+                HttpStatus.BAD_REQUEST,
+                "Validation failed",
+                "One or more parameters are invalid",
+                ErrorCode.VALIDATION_ERROR,
+                request
         );
 
-        return problemDetail;
     }
+
 
 
 }
