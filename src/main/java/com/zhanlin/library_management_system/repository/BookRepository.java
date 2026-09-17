@@ -2,13 +2,14 @@ package com.zhanlin.library_management_system.repository;
 
 import com.zhanlin.library_management_system.models.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BookRepository extends JpaRepository<Book,Long> {
+public interface BookRepository extends JpaRepository<Book,Long>, JpaSpecificationExecutor<Book> {
 
     List<Book> findByTitleContainingIgnoreCase(String title);
 

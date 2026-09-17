@@ -2,8 +2,10 @@
 package com.zhanlin.library_management_system.service;
 
 
+import com.zhanlin.library_management_system.dto.PageResponse;
 import com.zhanlin.library_management_system.dto.book.BookRequestDto;
 import com.zhanlin.library_management_system.dto.book.BookResponseDto;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,5 +28,5 @@ public interface BookService {
 
     Optional<BookResponseDto> getBookByIsbn(String isbn);
 
-    List<BookResponseDto> getAllBooks();
+    PageResponse<BookResponseDto> getAllBooks(Pageable pageable);
 }
