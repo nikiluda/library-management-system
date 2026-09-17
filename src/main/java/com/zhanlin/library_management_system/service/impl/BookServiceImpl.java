@@ -1,5 +1,6 @@
 package com.zhanlin.library_management_system.service.impl;
 
+import com.zhanlin.library_management_system.config.SortValidator;
 import com.zhanlin.library_management_system.dto.PageResponse;
 import com.zhanlin.library_management_system.dto.book.BookRequestDto;
 import com.zhanlin.library_management_system.dto.book.BookResponseDto;
@@ -30,12 +31,14 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
     private final PageMapper pageMapper;
+    private final SortValidator sortValidator;
 
 
-    public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper, PageMapper pageMapper) {
+    public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper, PageMapper pageMapper, SortValidator sortValidator) {
         this.bookRepository = bookRepository;
         this.bookMapper = bookMapper;
         this.pageMapper = pageMapper;
+        this.sortValidator = sortValidator;
     }
 
     private Book findBookById(Long id) {
@@ -140,6 +143,8 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     @Override
     public PageResponse<BookResponseDto> getAllBooks(Pageable pageable) {
+
+        sortValidator.validate(pageable);
         Page<Book> books = bookRepository.findAll(pageable);
 
         Page<BookResponseDto> result = books.map(bookMapper::toDto);

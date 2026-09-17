@@ -9,6 +9,8 @@ import com.zhanlin.library_management_system.models.response.ApiResponse;
 import com.zhanlin.library_management_system.service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +27,13 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<PageResponse<BookResponseDto>>> getAllBooks(Pageable pageable) {
+    public ResponseEntity<ApiResponse<PageResponse<BookResponseDto>>> getAllBooks(
+            @PageableDefault(
+                    size = 20,
+                    sort = "title",
+                    direction = Sort.Direction.ASC
+            )
+            Pageable pageable) {
         PageResponse<BookResponseDto> page = bookService.getAllBooks(pageable);
         return ResponseEntity.ok(ApiResponse.createSuccessful(page));
     }
