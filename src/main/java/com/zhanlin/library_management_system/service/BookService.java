@@ -25,7 +25,7 @@ public interface BookService {
 
     List<BookResponseDto> searchByAuthor(String author);
 
-    List<BookResponseDto> search(String title, String author);
+    PageResponse<BookResponseDto> search(BookFilterDto filter, Pageable pageable);
 
     Optional<BookResponseDto> getBookByIsbn(String isbn);
 
