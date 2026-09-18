@@ -1,6 +1,7 @@
 package com.zhanlin.library_management_system.controllers;
 
 
+import com.zhanlin.library_management_system.dto.BookFilterDto;
 import com.zhanlin.library_management_system.dto.PageResponse;
 import com.zhanlin.library_management_system.dto.book.BookRequestDto;
 import com.zhanlin.library_management_system.dto.book.BookResponseDto;
@@ -28,13 +29,14 @@ public class BookController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<PageResponse<BookResponseDto>>> getAllBooks(
+            BookFilterDto filterDto,
             @PageableDefault(
                     size = 20,
-                    sort = "title",
+                    sort = {"title", "id" },
                     direction = Sort.Direction.ASC
             )
             Pageable pageable) {
-        PageResponse<BookResponseDto> page = bookService.getAllBooks(pageable);
+        PageResponse<BookResponseDto> page = bookService.getAllBooks(filterDto, pageable);
         return ResponseEntity.ok(ApiResponse.createSuccessful(page));
     }
 

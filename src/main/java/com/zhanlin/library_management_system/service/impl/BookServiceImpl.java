@@ -1,6 +1,7 @@
 package com.zhanlin.library_management_system.service.impl;
 
 import com.zhanlin.library_management_system.config.SortValidator;
+import com.zhanlin.library_management_system.dto.BookFilterDto;
 import com.zhanlin.library_management_system.dto.PageResponse;
 import com.zhanlin.library_management_system.dto.book.BookRequestDto;
 import com.zhanlin.library_management_system.dto.book.BookResponseDto;
@@ -142,7 +143,9 @@ public class BookServiceImpl implements BookService {
 
     @Transactional(readOnly = true)
     @Override
-    public PageResponse<BookResponseDto> getAllBooks(Pageable pageable) {
+    public PageResponse<BookResponseDto> getAllBooks(
+            BookFilterDto filter,
+            Pageable pageable) {
 
         sortValidator.validate(pageable);
         Page<Book> books = bookRepository.findAll(pageable);

@@ -2,6 +2,7 @@
 package com.zhanlin.library_management_system.service;
 
 
+import com.zhanlin.library_management_system.dto.BookFilterDto;
 import com.zhanlin.library_management_system.dto.PageResponse;
 import com.zhanlin.library_management_system.dto.book.BookRequestDto;
 import com.zhanlin.library_management_system.dto.book.BookResponseDto;
@@ -28,5 +29,5 @@ public interface BookService {
 
     Optional<BookResponseDto> getBookByIsbn(String isbn);
 
-    PageResponse<BookResponseDto> getAllBooks(Pageable pageable);
+    PageResponse<BookResponseDto> getAllBooks(BookFilterDto filter, Pageable pageable);
 }
