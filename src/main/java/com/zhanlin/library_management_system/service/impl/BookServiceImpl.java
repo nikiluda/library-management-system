@@ -17,8 +17,10 @@ import com.zhanlin.library_management_system.models.Book;
 import com.zhanlin.library_management_system.repository.BookRepository;
 
 import com.zhanlin.library_management_system.service.BookService;
+import com.zhanlin.library_management_system.specification.BookSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -148,11 +150,17 @@ public class BookServiceImpl implements BookService {
             Pageable pageable) {
 
         sortValidator.validate(pageable);
-        Page<Book> books = bookRepository.findAll(pageable);
+        Specification<Book> specification = Specification.allOf(
+                BookSpecifications.hasTitle(filter.title()),
+                BookSpecifications.hasAuthor(filter.author()),
+                BookSpecifications.hasIsbn(filter.isbn()),
+                BookSpecifications.hasPublicationYear(filter.publicationYear()),
+                BookSpecifications.isAvailable(filter.available())
+        );
+
+        Page<Book> books = bookRepository.findAll(specification, pageable);
 
         Page<BookResponseDto> result = books.map(bookMapper::toDto);
-
-
         return pageMapper.toPageResponse(result);
     }
 }
