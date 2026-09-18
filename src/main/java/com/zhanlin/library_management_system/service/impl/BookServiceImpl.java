@@ -1,6 +1,6 @@
 package com.zhanlin.library_management_system.service.impl;
 
-import com.zhanlin.library_management_system.config.SortValidator;
+import com.zhanlin.library_management_system.util.SortValidator;
 import com.zhanlin.library_management_system.dto.BookFilterDto;
 import com.zhanlin.library_management_system.dto.PageResponse;
 import com.zhanlin.library_management_system.dto.book.BookRequestDto;

@@ -1,4 +1,4 @@
-package com.zhanlin.library_management_system.config;
+package com.zhanlin.library_management_system.util;
 
 import com.zhanlin.library_management_system.exceptions.InvalidSortFieldException;
 import org.springframework.data.domain.Pageable;
