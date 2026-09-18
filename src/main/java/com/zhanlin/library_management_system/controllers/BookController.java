@@ -15,7 +15,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/books")
@@ -79,21 +78,23 @@ public class BookController {
     }
 
 
-
-
-
-
-
-
-
-
-
-    //TODO: переделать поиск
     @GetMapping("/search")
-    public ResponseEntity<List<BookResponseDto>> search(@RequestParam(required = false) String title,
-                                                        @RequestParam(required = false) String author) {
-        return ResponseEntity.ok(bookService.search(title, author));
+    public ResponseEntity<ApiResponse<PageResponse<BookResponseDto>>> search(
+            BookFilterDto filter,
+            @PageableDefault(
+                    size = 20,
+                    sort = {"title", "id"},
+                    direction = Sort.Direction.ASC
+            )
+            Pageable pageable) {
+
+        PageResponse<BookResponseDto> page = bookService.search(filter, pageable);
+        return ResponseEntity.ok(ApiResponse.createSuccessful(
+                "Books found: ",
+                page)
+        );
 
 
     }
+
 }

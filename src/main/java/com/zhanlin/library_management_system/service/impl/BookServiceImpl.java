@@ -120,20 +120,24 @@ public class BookServiceImpl implements BookService {
                 .stream().map(bookMapper::toDto).toList();
     }
 
-
-    //TODO: залогировать
     @Override
-    public List<BookResponseDto> search(String title, String author) {
-        String titleQuery = (title!=null) ? title : "";
-        String authorQuery = (author!=null) ? author : "";
+    @Transactional(readOnly = true)
+    public PageResponse<BookResponseDto> search(
+            BookFilterDto filter,
+            Pageable pageable) {
 
+        sortValidator.validate(pageable);
 
-        List<BookResponseDto> books =  bookRepository.findByTitleContainingIgnoreCaseAndAuthorContainingIgnoreCase(titleQuery, authorQuery)
-                .stream()
-                .map(bookMapper::toDto)
-                .toList();
+        Specification<Book> specification = Specification.allOf(
+                BookSpecifications.hasTitle(filter.title()),
+                BookSpecifications.hasAuthor(filter.author())
+        );
 
-        return books;
+        Page<Book> books = bookRepository.findAll(specification, pageable);
+
+        Page<BookResponseDto> result = books.map(bookMapper::toDto);
+
+        return pageMapper.toPageResponse(result);
     }
 
     @Transactional(readOnly = true)
