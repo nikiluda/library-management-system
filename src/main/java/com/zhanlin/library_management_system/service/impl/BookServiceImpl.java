@@ -118,7 +118,7 @@ public class BookServiceImpl implements BookService {
     }
 
 
-    //залогировать
+    //TODO: залогировать
     @Override
     public List<BookResponseDto> search(String title, String author) {
         String titleQuery = (title!=null) ? title : "";
