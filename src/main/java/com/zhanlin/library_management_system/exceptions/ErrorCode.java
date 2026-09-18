@@ -22,6 +22,8 @@ public enum ErrorCode {
     VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "Validation failed"),
 
     INVALID_SORT_FIELD(HttpStatus.BAD_REQUEST, "Invalid sort field"),
+
+    OPTIMISTIC_LOCK_CONFLICT(HttpStatus.CONFLICT, "Optimistic locking conflict"),
     ;
 
     private final HttpStatus status;

@@ -25,6 +25,8 @@ public enum ApiErrorMessage {
     MALFORMED_REQUEST("Request body is invalid"),
     DATA_INTEGRITY_VIOLATION("The request conflicts with existing data"),
     INTERNAL_ERROR("An unexpected error occurred"),
+
+    OPTIMISTIC_LOCK_CONFLICT("The resource was modified by another transaction"),
     ;
 
     private final String message;

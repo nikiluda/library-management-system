@@ -8,6 +8,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -120,6 +121,16 @@ public class GlobalExceptionHandler {
                 request
         );
 
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ProblemDetail handleOptimisticLock(ObjectOptimisticLockingFailureException exception, HttpServletRequest request) {
+
+        return createProblem(
+                ErrorCode.OPTIMISTIC_LOCK_CONFLICT,
+                ApiErrorMessage.OPTIMISTIC_LOCK_CONFLICT.getMessage(),
+                request
+        );
     }
 
 
