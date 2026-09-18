@@ -24,6 +24,8 @@ public enum ErrorCode {
     INVALID_SORT_FIELD(HttpStatus.BAD_REQUEST, "Invalid sort field"),
 
     OPTIMISTIC_LOCK_CONFLICT(HttpStatus.CONFLICT, "Optimistic locking conflict"),
+
+    INVALID_BOOK_COPIES(HttpStatus.CONFLICT, "Invalid book copies"),
     ;
 
     private final HttpStatus status;

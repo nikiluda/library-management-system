@@ -27,6 +27,9 @@ public enum ApiErrorMessage {
     INTERNAL_ERROR("An unexpected error occurred"),
 
     OPTIMISTIC_LOCK_CONFLICT("The resource was modified by another transaction"),
+
+    INVALID_BOOK_COPIES("Available copies cannot exceed total copies"),
+
     ;
 
     private final String message;
