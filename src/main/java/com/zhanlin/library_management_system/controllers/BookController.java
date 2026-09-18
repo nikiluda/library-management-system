@@ -1,16 +1,20 @@
 package com.zhanlin.library_management_system.controllers;
 
 
+import com.zhanlin.library_management_system.dto.BookFilterDto;
+import com.zhanlin.library_management_system.dto.PageResponse;
 import com.zhanlin.library_management_system.dto.book.BookRequestDto;
 import com.zhanlin.library_management_system.dto.book.BookResponseDto;
 import com.zhanlin.library_management_system.messages.ApiMessage;
 import com.zhanlin.library_management_system.models.response.ApiResponse;
 import com.zhanlin.library_management_system.service.BookService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -23,11 +27,20 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    //TODO : переделать под пагинацию
     @GetMapping
-    public ResponseEntity<List<BookResponseDto>> getAllBooks() {
-        return ResponseEntity.ok(bookService.getAllBooks());
+    public ResponseEntity<ApiResponse<PageResponse<BookResponseDto>>> getAllBooks(
+            BookFilterDto filterDto,
+            @PageableDefault(
+                    size = 20,
+                    sort = {"title", "id" },
+                    direction = Sort.Direction.ASC
+            )
+            Pageable pageable) {
+        PageResponse<BookResponseDto> page = bookService.getAllBooks(filterDto, pageable);
+        return ResponseEntity.ok(ApiResponse.createSuccessful(page));
     }
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<BookResponseDto>> getBookById(@PathVariable Long id) {
@@ -62,7 +75,18 @@ public class BookController {
     public ResponseEntity<Void> deleteBook(@PathVariable("id") Long id) {
         bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
+
     }
+
+
+
+
+
+
+
+
+
+
 
     //TODO: переделать поиск
     @GetMapping("/search")

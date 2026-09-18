@@ -1,5 +1,8 @@
 package com.zhanlin.library_management_system.service.impl;
 
+import com.zhanlin.library_management_system.config.SortValidator;
+import com.zhanlin.library_management_system.dto.BookFilterDto;
+import com.zhanlin.library_management_system.dto.PageResponse;
 import com.zhanlin.library_management_system.dto.book.BookRequestDto;
 import com.zhanlin.library_management_system.dto.book.BookResponseDto;
 import com.zhanlin.library_management_system.exceptions.ErrorCode;
@@ -8,11 +11,14 @@ import com.zhanlin.library_management_system.exceptions.ResourceNotFoundExceptio
 import com.zhanlin.library_management_system.logging.annotation.Audit;
 import com.zhanlin.library_management_system.logging.annotation.AuditAction;
 import com.zhanlin.library_management_system.mappers.BookMapper;
+import com.zhanlin.library_management_system.mappers.PageMapper;
 import com.zhanlin.library_management_system.messages.ApiErrorMessage;
 import com.zhanlin.library_management_system.models.Book;
 import com.zhanlin.library_management_system.repository.BookRepository;
 
 import com.zhanlin.library_management_system.service.BookService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,11 +31,15 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
+    private final PageMapper pageMapper;
+    private final SortValidator sortValidator;
 
 
-    public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper) {
+    public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper, PageMapper pageMapper, SortValidator sortValidator) {
         this.bookRepository = bookRepository;
         this.bookMapper = bookMapper;
+        this.pageMapper = pageMapper;
+        this.sortValidator = sortValidator;
     }
 
     private Book findBookById(Long id) {
@@ -109,7 +119,7 @@ public class BookServiceImpl implements BookService {
     }
 
 
-    //залогировать
+    //TODO: залогировать
     @Override
     public List<BookResponseDto> search(String title, String author) {
         String titleQuery = (title!=null) ? title : "";
@@ -130,11 +140,19 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findByIsbn(isbn).map(bookMapper::toDto);
     }
 
+
     @Transactional(readOnly = true)
     @Override
-    public List<BookResponseDto> getAllBooks() {
+    public PageResponse<BookResponseDto> getAllBooks(
+            BookFilterDto filter,
+            Pageable pageable) {
 
-        List<BookResponseDto> books =  bookRepository.findAll().stream().map(bookMapper::toDto).toList();
-        return books;
+        sortValidator.validate(pageable);
+        Page<Book> books = bookRepository.findAll(pageable);
+
+        Page<BookResponseDto> result = books.map(bookMapper::toDto);
+
+
+        return pageMapper.toPageResponse(result);
     }
 }

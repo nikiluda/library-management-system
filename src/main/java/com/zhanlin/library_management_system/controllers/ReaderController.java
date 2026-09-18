@@ -22,11 +22,27 @@ public class ReaderController {
         this.readerService = readerService;
     }
 
+
+
+
+
+
+
+
     //TODO: переделать под пагинацию
     @GetMapping
     public ResponseEntity<List<ReaderResponseDto>> getAllReaders() {
         return ResponseEntity.ok(readerService.getAllReaders());
     }
+
+
+
+
+
+
+
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ReaderResponseDto>> getReaderById(@PathVariable Long id) {

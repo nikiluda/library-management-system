@@ -45,6 +45,16 @@ public class BookLoanController {
         );
     }
 
+
+
+
+
+
+
+
+
+
+
     //TODO: изменить под пагинацию и ResponsePagination
     @GetMapping("/reader/{readerId}")
     public ResponseEntity<ApiResponse<List<BookLoanResponseDto>>> getLoansByReader(@PathVariable Long readerId) {
