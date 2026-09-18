@@ -68,8 +68,9 @@ public class BookLoanServiceImpl implements BookLoanService {
 
     }
 
-    @Override
+
     @Audit(AuditAction.BOOK_ISSUED)
+    @Override
     public BookLoanResponseDto loanBook(BookLoanRequestDto dto) {
 
         Book book = findBook(dto.bookId());
