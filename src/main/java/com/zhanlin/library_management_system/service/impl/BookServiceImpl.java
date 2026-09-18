@@ -1,5 +1,6 @@
 package com.zhanlin.library_management_system.service.impl;
 
+import com.zhanlin.library_management_system.exceptions.BusinessRuleException;
 import com.zhanlin.library_management_system.util.SortValidator;
 import com.zhanlin.library_management_system.dto.BookFilterDto;
 import com.zhanlin.library_management_system.dto.PageResponse;
@@ -84,6 +85,13 @@ public class BookServiceImpl implements BookService {
         }
 
         bookMapper.updateBook(dto, book);
+
+        if (book.getAvailableCopies() > book.getTotalCopies()) {
+            throw new BusinessRuleException(
+                    ErrorCode.INVALID_BOOK_COPIES,
+                    ApiErrorMessage.INVALID_BOOK_COPIES.getMessage()
+            );
+        }
 
         Book updatedBook = bookRepository.save(book);
         return bookMapper.toDto(updatedBook);
