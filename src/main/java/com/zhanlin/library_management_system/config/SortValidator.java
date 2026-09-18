@@ -1,5 +1,6 @@
 package com.zhanlin.library_management_system.config;
 
+import com.zhanlin.library_management_system.exceptions.InvalidSortFieldException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ public class SortValidator {
             String property = order.getProperty();
 
             if (!ALLOWED_SORT_FIELDS.contains(property)) {
-                throw new IllegalArgumentException(
+                throw new InvalidSortFieldException(
                         "Sorting by field '" + property + "' is not allowed"
                 );
             }

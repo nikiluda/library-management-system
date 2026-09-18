@@ -19,7 +19,9 @@ public enum ErrorCode {
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR),
     DATA_INTEGRITY_VIOLATION(HttpStatus.CONFLICT),
     MALFORMED_REQUEST(HttpStatus.BAD_REQUEST),
-    VALIDATION_ERROR(HttpStatus.BAD_REQUEST)
+    VALIDATION_ERROR(HttpStatus.BAD_REQUEST),
+
+    INVALID_SORT_FIELD(HttpStatus.BAD_REQUEST),
     ;
 
     private final HttpStatus status;
