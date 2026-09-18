@@ -21,13 +21,12 @@ public class GlobalExceptionHandler {
 
     private ProblemDetail createProblem(
             ErrorCode errorCode,
-            String title,
             String detail,
             HttpServletRequest request
     ) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(errorCode.getStatus());
 
-        problemDetail.setTitle(title);
+        problemDetail.setTitle(errorCode.getTitle());
         problemDetail.setDetail(detail);
         problemDetail.setInstance(
                 URI.create(request.getRequestURI())
@@ -47,7 +46,6 @@ public class GlobalExceptionHandler {
 
         return createProblem(
                 errorCode,
-                "Library error",
                 exception.getMessage(),
                 request
         );
@@ -60,7 +58,6 @@ public class GlobalExceptionHandler {
     ) {
         ProblemDetail problemDetail = createProblem(
                 ErrorCode.VALIDATION_ERROR,
-                "Validation failed",
                 ApiErrorMessage.VALIDATION_ERROR.getMessage(),
                 request
         );
@@ -87,7 +84,6 @@ public class GlobalExceptionHandler {
     ) {
         return createProblem(
                 ErrorCode.MALFORMED_REQUEST,
-                "Malformed request",
                 ApiErrorMessage.MALFORMED_REQUEST.getMessage(),
                 request
         );
@@ -100,7 +96,6 @@ public class GlobalExceptionHandler {
     ) {
         return createProblem(
                 ErrorCode.INTERNAL_ERROR,
-                "Internal server error",
                 ApiErrorMessage.INTERNAL_ERROR.getMessage(),
                 request
         );
@@ -112,7 +107,6 @@ public class GlobalExceptionHandler {
 
         return createProblem(
                 ErrorCode.DATA_INTEGRITY_VIOLATION,
-                "Data integrity violation",
                 ApiErrorMessage.DATA_INTEGRITY_VIOLATION.getMessage(),
                 request
         );
@@ -123,7 +117,6 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleConstraintViolation(ConstraintViolationException exception, HttpServletRequest request) {
         return createProblem(
                 ErrorCode.VALIDATION_ERROR,
-                "Validation failed",
                 ApiErrorMessage.VALIDATION_ERROR.getMessage(),
                 request
         );

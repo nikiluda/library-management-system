@@ -4,33 +4,39 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
 
-    BOOK_NOT_FOUND(HttpStatus.NOT_FOUND),
-    READER_NOT_FOUND(HttpStatus.NOT_FOUND),
-    LOAN_NOT_FOUND(HttpStatus.NOT_FOUND),
+    BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "Book not found"),
+    READER_NOT_FOUND(HttpStatus.NOT_FOUND, "Reader not found"),
+    LOAN_NOT_FOUND(HttpStatus.NOT_FOUND, "Loan not found"),
 
-    ISBN_ALREADY_EXISTS(HttpStatus.CONFLICT),
-    EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT),
-    PHONE_ALREADY_EXISTS(HttpStatus.CONFLICT),
+    ISBN_ALREADY_EXISTS(HttpStatus.CONFLICT, "ISBN already exists"),
+    EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "Email already exists"),
+    PHONE_ALREADY_EXISTS(HttpStatus.CONFLICT, "Phone already exists"),
 
-    NO_AVAILABLE_COPIES(HttpStatus.CONFLICT),
-    ACTIVE_LOAN_EXISTS(HttpStatus.CONFLICT),
-    LOAN_ALREADY_RETURNED(HttpStatus.CONFLICT),
+    NO_AVAILABLE_COPIES(HttpStatus.CONFLICT, "No available copies"),
+    ACTIVE_LOAN_EXISTS(HttpStatus.CONFLICT, "Active loan exists"),
+    LOAN_ALREADY_RETURNED(HttpStatus.CONFLICT, "Loan already returned"),
 
-    INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR),
-    DATA_INTEGRITY_VIOLATION(HttpStatus.CONFLICT),
-    MALFORMED_REQUEST(HttpStatus.BAD_REQUEST),
-    VALIDATION_ERROR(HttpStatus.BAD_REQUEST),
+    INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error"),
+    DATA_INTEGRITY_VIOLATION(HttpStatus.CONFLICT, "Data integrity violation"),
+    MALFORMED_REQUEST(HttpStatus.BAD_REQUEST, "Malformed request"),
+    VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "Validation failed"),
 
-    INVALID_SORT_FIELD(HttpStatus.BAD_REQUEST),
+    INVALID_SORT_FIELD(HttpStatus.BAD_REQUEST, "Invalid sort field"),
     ;
 
     private final HttpStatus status;
+    private final String title;
 
-    ErrorCode(HttpStatus status) {
+    ErrorCode(HttpStatus status, String title) {
         this.status = status;
+        this.title = title;
     }
 
     public HttpStatus getStatus() {
         return status;
+    }
+
+    public String getTitle() {
+        return title;
     }
 }
