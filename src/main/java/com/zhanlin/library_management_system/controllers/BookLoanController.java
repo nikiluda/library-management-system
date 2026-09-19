@@ -9,6 +9,7 @@ import com.zhanlin.library_management_system.messages.ApiMessage;
 import com.zhanlin.library_management_system.models.response.ApiResponse;
 import com.zhanlin.library_management_system.service.BookLoanService;
 import jakarta.validation.Valid;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -66,20 +67,16 @@ public class BookLoanController {
         ));
     }
 
-
-
-
-
-
-
-
-
-
-
-    //TODO: изменить под пагинацию и ResponsePagination
     @GetMapping("/reader/{readerId}")
-    public ResponseEntity<ApiResponse<List<BookLoanResponseDto>>> getLoansByReader(@PathVariable Long readerId) {
-        return ResponseEntity.ok(ApiResponse.createSuccessful(bookLoanService.getLoansByReader(readerId)));
+    public ResponseEntity<ApiResponse<PageResponse<BookLoanResponseDto>>> getLoansByReader(
+            @PathVariable Long readerId,
+            @PageableDefault(
+                    size = 20,
+                    sort = {"loanDate"},
+                    direction = Sort.Direction.ASC)
+            Pageable pageable) {
+
+        return ResponseEntity.ok(ApiResponse.createSuccessful(bookLoanService.getLoansByReader(readerId, pageable)));
     }
 
 

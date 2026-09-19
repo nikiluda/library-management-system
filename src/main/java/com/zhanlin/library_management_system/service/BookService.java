@@ -21,10 +21,6 @@ public interface BookService {
 
     void deleteBook(Long id);
 
-    List<BookResponseDto> searchByTitle(String title);
-
-    List<BookResponseDto> searchByAuthor(String author);
-
     PageResponse<BookResponseDto> search(BookFilterDto filter, Pageable pageable);
 
     Optional<BookResponseDto> getBookByIsbn(String isbn);

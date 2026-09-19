@@ -25,7 +25,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -114,19 +113,6 @@ public class BookServiceImpl implements BookService {
         bookRepository.delete(book);
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public List<BookResponseDto> searchByTitle(String title) {
-        return bookRepository.findByTitleContainingIgnoreCase(title)
-                .stream().map(bookMapper::toDto).toList();
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<BookResponseDto> searchByAuthor(String author) {
-        return bookRepository.findByAuthorContainingIgnoreCase(author)
-                .stream().map(bookMapper::toDto).toList();
-    }
 
     @Override
     @Transactional(readOnly = true)

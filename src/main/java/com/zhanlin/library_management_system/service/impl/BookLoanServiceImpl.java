@@ -188,12 +188,19 @@ public class BookLoanServiceImpl implements BookLoanService {
     //TODO: добавить пагинацию
     @Override
     @Transactional(readOnly = true)
-    public List<BookLoanResponseDto> getLoansByReader(Long readerId) {
+    public PageResponse<BookLoanResponseDto> getLoansByReader(Long readerId, Pageable pageable) {
         findReader(readerId);
-        List<BookLoan> loans = bookLoanRepository.findByReaderId(readerId);
 
-        return loans.stream().map(bookLoanMapper::toDto).toList();
+        Page<BookLoan> page = bookLoanRepository.findByReaderId(readerId, pageable);
+        Page<BookLoanResponseDto> result = page.map(bookLoanMapper::toDto);
+
+        return pageMapper.toPageResponse(result);
     }
+
+
+
+
+
 
     @Transactional(readOnly = true)
     @Override
