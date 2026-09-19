@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
+
 
 @Service
 @Transactional
@@ -159,8 +159,7 @@ public class BookLoanServiceImpl implements BookLoanService {
         return bookLoanMapper.toDto(savedLoan);
     }
 
-    //TODO: доделать
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public PageResponse<BookLoanResponseDto> getAllLoans(LoanFilterDto filterDto, Pageable pageable) {
         sortValidator.validateLoans(pageable);
@@ -179,13 +178,6 @@ public class BookLoanServiceImpl implements BookLoanService {
         return pageMapper.toPageResponse(result);
     }
 
-
-
-
-
-
-
-    //TODO: добавить пагинацию
     @Override
     @Transactional(readOnly = true)
     public PageResponse<BookLoanResponseDto> getLoansByReader(Long readerId, Pageable pageable) {
@@ -198,17 +190,24 @@ public class BookLoanServiceImpl implements BookLoanService {
     }
 
 
-
-
-
-
     @Transactional(readOnly = true)
     @Override
-    public List<BookLoanResponseDto> getOverdueLoans() {
-        List<BookLoan> loans = bookLoanRepository.findByStatusAndDueDateBefore(BookLoan.LoanStatus.ACTIVE, LocalDate.now());
+    public PageResponse<BookLoanResponseDto> getOverdueLoans(Pageable pageable) {
 
-        return loans.stream().map(bookLoanMapper::toDto).toList();
+        Specification<BookLoan> specification =
+                LoanSpecifications.isOverdue();
+
+        Page<BookLoan> page =
+                bookLoanRepository.findAll(specification, pageable);
+
+        Page<BookLoanResponseDto> result =
+                page.map(bookLoanMapper::toDto);
+
+        return pageMapper.toPageResponse(result);
     }
+
+
+
 
 
 

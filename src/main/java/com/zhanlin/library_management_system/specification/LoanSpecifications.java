@@ -105,5 +105,18 @@ public class LoanSpecifications {
                 );
     }
 
+    public static Specification<BookLoan> isOverdue() {
+
+        return (root, query, criteriaBuilder) ->
+
+                criteriaBuilder.and(
+                        criteriaBuilder.equal(root.get("status"),
+                                BookLoan.LoanStatus.ACTIVE),
+
+                        criteriaBuilder.lessThan(root.get("dueDate"),
+                                LocalDate.now())
+                );
+    }
+
 
 }

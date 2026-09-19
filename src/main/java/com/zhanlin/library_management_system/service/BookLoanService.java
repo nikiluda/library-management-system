@@ -18,7 +18,7 @@ public interface BookLoanService {
 
     PageResponse<BookLoanResponseDto> getLoansByReader(Long readerId, Pageable pageable);
 
-    List<BookLoanResponseDto> getOverdueLoans();
+    PageResponse<BookLoanResponseDto> getOverdueLoans(Pageable pageable);
 
     PageResponse<BookLoanResponseDto> getAllLoans(LoanFilterDto filterDto, Pageable pageable);
 

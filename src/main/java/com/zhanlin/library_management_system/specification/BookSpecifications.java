@@ -1,6 +1,7 @@
 package com.zhanlin.library_management_system.specification;
 
 import com.zhanlin.library_management_system.models.Book;
+import com.zhanlin.library_management_system.models.BookLoan;
 import org.springframework.data.jpa.domain.Specification;
 
 public class BookSpecifications {
@@ -77,4 +78,5 @@ public class BookSpecifications {
                         0
                 );
     }
+
 }

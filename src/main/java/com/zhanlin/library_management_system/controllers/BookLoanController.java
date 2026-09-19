@@ -17,9 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/loans")
 public class BookLoanController {
@@ -80,10 +77,10 @@ public class BookLoanController {
     }
 
 
-    //TODO: изменить под пагинацию и ResponsePagination
     @GetMapping("/overdue")
-    public ResponseEntity<List<BookLoanResponseDto>> getOverdueLoans() {
-        return ResponseEntity.ok(bookLoanService.getOverdueLoans());
+    public ResponseEntity<ApiResponse<PageResponse<BookLoanResponseDto>>> getOverdueLoans(Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.createSuccessful(bookLoanService.getOverdueLoans(pageable)
+        ));
     }
 
 
