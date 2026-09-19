@@ -1,16 +1,18 @@
 package com.zhanlin.library_management_system.controllers;
 
+import com.zhanlin.library_management_system.dto.PageResponse;
 import com.zhanlin.library_management_system.dto.reader.ReaderRequestDto;
 import com.zhanlin.library_management_system.dto.reader.ReaderResponseDto;
 import com.zhanlin.library_management_system.messages.ApiMessage;
 import com.zhanlin.library_management_system.models.response.ApiResponse;
 import com.zhanlin.library_management_system.service.ReaderService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/readers")
@@ -22,27 +24,20 @@ public class ReaderController {
         this.readerService = readerService;
     }
 
-
-
-
-
-
-
-
-    //TODO: переделать под пагинацию
     @GetMapping
-    public ResponseEntity<List<ReaderResponseDto>> getAllReaders() {
-        return ResponseEntity.ok(readerService.getAllReaders());
+    public ResponseEntity<ApiResponse<PageResponse<ReaderResponseDto>>> getAllReaders(
+            @PageableDefault(
+                    size = 20,
+                    sort = {"id","lastName"},
+                    direction = Sort.Direction.ASC
+            )
+            Pageable pageable) {
+
+        return ResponseEntity.ok(ApiResponse.createSuccessful(
+                "All readers",
+                readerService.getAllReaders(pageable)
+        ));
     }
-
-
-
-
-
-
-
-
-
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ReaderResponseDto>> getReaderById(@PathVariable Long id) {
