@@ -1,11 +1,16 @@
 package com.zhanlin.library_management_system.service.impl;
 
+import com.zhanlin.library_management_system.dto.BookFilterDto;
+import com.zhanlin.library_management_system.dto.LoanFilterDto;
+import com.zhanlin.library_management_system.dto.PageResponse;
+import com.zhanlin.library_management_system.dto.book.BookResponseDto;
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanRequestDto;
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanResponseDto;
 import com.zhanlin.library_management_system.exceptions.*;
 import com.zhanlin.library_management_system.logging.annotation.Audit;
 import com.zhanlin.library_management_system.logging.annotation.AuditAction;
 import com.zhanlin.library_management_system.mappers.BookLoanMapper;
+import com.zhanlin.library_management_system.mappers.PageMapper;
 import com.zhanlin.library_management_system.messages.ApiErrorMessage;
 import com.zhanlin.library_management_system.models.Book;
 import com.zhanlin.library_management_system.models.BookLoan;
@@ -15,11 +20,16 @@ import com.zhanlin.library_management_system.repository.BookRepository;
 import com.zhanlin.library_management_system.repository.ReaderRepository;
 
 import com.zhanlin.library_management_system.service.BookLoanService;
+import com.zhanlin.library_management_system.specification.LoanSpecifications;
+import com.zhanlin.library_management_system.util.SortValidator;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
+
 
 @Service
 @Transactional
@@ -29,12 +39,16 @@ public class BookLoanServiceImpl implements BookLoanService {
     private final BookRepository bookRepository;
     private final ReaderRepository readerRepository;
     private final BookLoanMapper bookLoanMapper;
+    private final PageMapper pageMapper;
+    private final SortValidator sortValidator;
 
-    public BookLoanServiceImpl(BookLoanRepository bookLoanRepository, BookRepository bookRepository, ReaderRepository readerRepository, BookLoanMapper bookLoanMapper) {
+    public BookLoanServiceImpl(BookLoanRepository bookLoanRepository, BookRepository bookRepository, ReaderRepository readerRepository, BookLoanMapper bookLoanMapper, PageMapper pageMapper, SortValidator sortValidator) {
         this.bookLoanRepository = bookLoanRepository;
         this.bookRepository = bookRepository;
         this.readerRepository = readerRepository;
         this.bookLoanMapper = bookLoanMapper;
+        this.pageMapper = pageMapper;
+        this.sortValidator = sortValidator;
     }
 
     private Book findBook(Long id) {
@@ -145,31 +159,59 @@ public class BookLoanServiceImpl implements BookLoanService {
         return bookLoanMapper.toDto(savedLoan);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public PageResponse<BookLoanResponseDto> getAllLoans(LoanFilterDto filterDto, Pageable pageable) {
+        sortValidator.validateLoans(pageable);
+        Specification<BookLoan> specification = Specification.allOf(
+                LoanSpecifications.hasBookTitle(filterDto.bookTitle()),
+                LoanSpecifications.hasReaderName(filterDto.readerName()),
+                LoanSpecifications.loanDateFrom(filterDto.loanDateFrom()),
+                LoanSpecifications.loanDateTo(filterDto.loanDateTo()),
+                LoanSpecifications.dueDateFrom(filterDto.dueDateFrom()),
+                LoanSpecifications.dueDateTo(filterDto.dueDateTo()),
+                LoanSpecifications.hasStatus(filterDto.status())
+        );
+        Page<BookLoan> page = bookLoanRepository.findAll(specification, pageable);
+        Page<BookLoanResponseDto> result = page.map(bookLoanMapper::toDto);
+
+        return pageMapper.toPageResponse(result);
+    }
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookLoanResponseDto> getLoansByReader(Long readerId) {
+    public PageResponse<BookLoanResponseDto> getLoansByReader(Long readerId, Pageable pageable) {
         findReader(readerId);
-        List<BookLoan> loans = bookLoanRepository.findByReaderId(readerId);
 
-        return loans.stream().map(bookLoanMapper::toDto).toList();
+        Page<BookLoan> page = bookLoanRepository.findByReaderId(readerId, pageable);
+        Page<BookLoanResponseDto> result = page.map(bookLoanMapper::toDto);
+
+        return pageMapper.toPageResponse(result);
     }
+
 
     @Transactional(readOnly = true)
     @Override
-    public List<BookLoanResponseDto> getOverdueLoans() {
-        List<BookLoan> loans = bookLoanRepository.findByStatusAndDueDateBefore(BookLoan.LoanStatus.ACTIVE, LocalDate.now());
+    public PageResponse<BookLoanResponseDto> getOverdueLoans(Pageable pageable) {
 
-        return loans.stream().map(bookLoanMapper::toDto).toList();
+        Specification<BookLoan> specification =
+                LoanSpecifications.isOverdue();
+
+        Page<BookLoan> page =
+                bookLoanRepository.findAll(specification, pageable);
+
+        Page<BookLoanResponseDto> result =
+                page.map(bookLoanMapper::toDto);
+
+        return pageMapper.toPageResponse(result);
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public List<BookLoanResponseDto> getAllLoans() {
 
-        List<BookLoanResponseDto> loans = bookLoanRepository.findAll().stream().map(bookLoanMapper::toDto).toList();
-        return loans;
-    }
+
+
+
+
+
 
 
 }
