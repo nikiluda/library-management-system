@@ -1,9 +1,9 @@
 package com.zhanlin.library_management_system.service;
 
+import com.zhanlin.library_management_system.dto.PageResponse;
 import com.zhanlin.library_management_system.dto.reader.ReaderRequestDto;
 import com.zhanlin.library_management_system.dto.reader.ReaderResponseDto;
-
-import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 
 public interface ReaderService {
@@ -16,5 +16,5 @@ public interface ReaderService {
 
     void deleteReader(Long id);
 
-    List<ReaderResponseDto> getAllReaders();
+    PageResponse<ReaderResponseDto> getAllReaders(Pageable pageable);
 }
