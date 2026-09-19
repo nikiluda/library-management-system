@@ -1,6 +1,7 @@
 package com.zhanlin.library_management_system.controllers;
 
 
+import com.zhanlin.library_management_system.dto.LoanFilterDto;
 import com.zhanlin.library_management_system.dto.PageResponse;
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanRequestDto;
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanResponseDto;
@@ -52,6 +53,7 @@ public class BookLoanController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<PageResponse<BookLoanResponseDto>>> getAllLoans(
+            LoanFilterDto filterDto,
             @PageableDefault(
                     size = 20,
                     sort = {"id"},
@@ -60,7 +62,7 @@ public class BookLoanController {
             Pageable pageable) {
         return ResponseEntity.ok(ApiResponse.createSuccessful(
                 "Loans: ",
-                bookLoanService.getAllLoans(pageable)
+                bookLoanService.getAllLoans(filterDto, pageable)
         ));
     }
 

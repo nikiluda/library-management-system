@@ -1,5 +1,7 @@
 package com.zhanlin.library_management_system.service;
 
+import com.zhanlin.library_management_system.dto.BookFilterDto;
+import com.zhanlin.library_management_system.dto.LoanFilterDto;
 import com.zhanlin.library_management_system.dto.PageResponse;
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanRequestDto;
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanResponseDto;
@@ -17,7 +19,7 @@ public interface BookLoanService {
 
     List<BookLoanResponseDto> getOverdueLoans();
 
-    PageResponse<BookLoanResponseDto> getAllLoans(Pageable pageable);
+    PageResponse<BookLoanResponseDto> getAllLoans(LoanFilterDto filterDto, Pageable pageable);
 
 
 }

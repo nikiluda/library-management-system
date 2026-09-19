@@ -1,5 +1,7 @@
 package com.zhanlin.library_management_system.service.impl;
 
+import com.zhanlin.library_management_system.dto.BookFilterDto;
+import com.zhanlin.library_management_system.dto.LoanFilterDto;
 import com.zhanlin.library_management_system.dto.PageResponse;
 import com.zhanlin.library_management_system.dto.book.BookResponseDto;
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanRequestDto;
@@ -18,9 +20,11 @@ import com.zhanlin.library_management_system.repository.BookRepository;
 import com.zhanlin.library_management_system.repository.ReaderRepository;
 
 import com.zhanlin.library_management_system.service.BookLoanService;
+import com.zhanlin.library_management_system.specification.LoanSpecifications;
 import com.zhanlin.library_management_system.util.SortValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -158,9 +162,12 @@ public class BookLoanServiceImpl implements BookLoanService {
     //TODO: доделать
     @Transactional
     @Override
-    public PageResponse<BookLoanResponseDto> getAllLoans(Pageable pageable) {
+    public PageResponse<BookLoanResponseDto> getAllLoans(LoanFilterDto filterDto, Pageable pageable) {
         sortValidator.validateLoans(pageable);
-        Page<BookLoan> page = bookLoanRepository.findAll(pageable);
+        Specification<BookLoan> specification = Specification.allOf(
+                LoanSpecifications.hasBookTitle(filterDto.bookTitle())
+        );
+        Page<BookLoan> page = bookLoanRepository.findAll(specification, pageable);
         Page<BookLoanResponseDto> result = page.map(bookLoanMapper::toDto);
 
         return pageMapper.toPageResponse(result);
