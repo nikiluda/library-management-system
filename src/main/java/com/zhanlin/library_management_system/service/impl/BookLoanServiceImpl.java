@@ -165,7 +165,13 @@ public class BookLoanServiceImpl implements BookLoanService {
     public PageResponse<BookLoanResponseDto> getAllLoans(LoanFilterDto filterDto, Pageable pageable) {
         sortValidator.validateLoans(pageable);
         Specification<BookLoan> specification = Specification.allOf(
-                LoanSpecifications.hasBookTitle(filterDto.bookTitle())
+                LoanSpecifications.hasBookTitle(filterDto.bookTitle()),
+                LoanSpecifications.hasReaderName(filterDto.readerName()),
+                LoanSpecifications.loanDateFrom(filterDto.loanDateFrom()),
+                LoanSpecifications.loanDateTo(filterDto.loanDateTo()),
+                LoanSpecifications.dueDateFrom(filterDto.dueDateFrom()),
+                LoanSpecifications.dueDateTo(filterDto.dueDateTo()),
+                LoanSpecifications.hasStatus(filterDto.status())
         );
         Page<BookLoan> page = bookLoanRepository.findAll(specification, pageable);
         Page<BookLoanResponseDto> result = page.map(bookLoanMapper::toDto);
