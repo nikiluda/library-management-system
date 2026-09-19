@@ -1,11 +1,14 @@
 package com.zhanlin.library_management_system.service.impl;
 
+import com.zhanlin.library_management_system.dto.PageResponse;
+import com.zhanlin.library_management_system.dto.book.BookResponseDto;
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanRequestDto;
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanResponseDto;
 import com.zhanlin.library_management_system.exceptions.*;
 import com.zhanlin.library_management_system.logging.annotation.Audit;
 import com.zhanlin.library_management_system.logging.annotation.AuditAction;
 import com.zhanlin.library_management_system.mappers.BookLoanMapper;
+import com.zhanlin.library_management_system.mappers.PageMapper;
 import com.zhanlin.library_management_system.messages.ApiErrorMessage;
 import com.zhanlin.library_management_system.models.Book;
 import com.zhanlin.library_management_system.models.BookLoan;
@@ -15,6 +18,9 @@ import com.zhanlin.library_management_system.repository.BookRepository;
 import com.zhanlin.library_management_system.repository.ReaderRepository;
 
 import com.zhanlin.library_management_system.service.BookLoanService;
+import com.zhanlin.library_management_system.util.SortValidator;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,12 +35,16 @@ public class BookLoanServiceImpl implements BookLoanService {
     private final BookRepository bookRepository;
     private final ReaderRepository readerRepository;
     private final BookLoanMapper bookLoanMapper;
+    private final PageMapper pageMapper;
+    private final SortValidator sortValidator;
 
-    public BookLoanServiceImpl(BookLoanRepository bookLoanRepository, BookRepository bookRepository, ReaderRepository readerRepository, BookLoanMapper bookLoanMapper) {
+    public BookLoanServiceImpl(BookLoanRepository bookLoanRepository, BookRepository bookRepository, ReaderRepository readerRepository, BookLoanMapper bookLoanMapper, PageMapper pageMapper, SortValidator sortValidator) {
         this.bookLoanRepository = bookLoanRepository;
         this.bookRepository = bookRepository;
         this.readerRepository = readerRepository;
         this.bookLoanMapper = bookLoanMapper;
+        this.pageMapper = pageMapper;
+        this.sortValidator = sortValidator;
     }
 
     private Book findBook(Long id) {
@@ -145,7 +155,24 @@ public class BookLoanServiceImpl implements BookLoanService {
         return bookLoanMapper.toDto(savedLoan);
     }
 
+    //TODO: доделать
+    @Transactional
+    @Override
+    public PageResponse<BookLoanResponseDto> getAllLoans(Pageable pageable) {
+        sortValidator.validateLoans(pageable);
+        Page<BookLoan> page = bookLoanRepository.findAll(pageable);
+        Page<BookLoanResponseDto> result = page.map(bookLoanMapper::toDto);
 
+        return pageMapper.toPageResponse(result);
+    }
+
+
+
+
+
+
+
+    //TODO: добавить пагинацию
     @Override
     @Transactional(readOnly = true)
     public List<BookLoanResponseDto> getLoansByReader(Long readerId) {
@@ -163,13 +190,9 @@ public class BookLoanServiceImpl implements BookLoanService {
         return loans.stream().map(bookLoanMapper::toDto).toList();
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public List<BookLoanResponseDto> getAllLoans() {
 
-        List<BookLoanResponseDto> loans = bookLoanRepository.findAll().stream().map(bookLoanMapper::toDto).toList();
-        return loans;
-    }
+
+
 
 
 }

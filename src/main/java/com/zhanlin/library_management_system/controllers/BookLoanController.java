@@ -1,15 +1,20 @@
 package com.zhanlin.library_management_system.controllers;
 
 
+import com.zhanlin.library_management_system.dto.PageResponse;
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanRequestDto;
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanResponseDto;
 import com.zhanlin.library_management_system.messages.ApiMessage;
 import com.zhanlin.library_management_system.models.response.ApiResponse;
 import com.zhanlin.library_management_system.service.BookLoanService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
@@ -45,6 +50,20 @@ public class BookLoanController {
         );
     }
 
+    @GetMapping
+    public ResponseEntity<ApiResponse<PageResponse<BookLoanResponseDto>>> getAllLoans(
+            @PageableDefault(
+                    size = 20,
+                    sort = {"id"},
+                    direction = Sort.Direction.ASC
+            )
+            Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.createSuccessful(
+                "Loans: ",
+                bookLoanService.getAllLoans(pageable)
+        ));
+    }
+
 
 
 
@@ -68,11 +87,8 @@ public class BookLoanController {
         return ResponseEntity.ok(bookLoanService.getOverdueLoans());
     }
 
-    //TODO: изменить под пагинацию и ResponsePagination
-    @GetMapping
-    public ResponseEntity<List<BookLoanResponseDto>> getAllLoans() {
-        return ResponseEntity.ok(bookLoanService.getAllLoans());
-    }
+
+
 
 
 }
