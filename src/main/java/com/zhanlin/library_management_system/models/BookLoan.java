@@ -36,8 +36,7 @@ public class BookLoan {
 
     public enum LoanStatus {
         ACTIVE,
-        RETURNED,
-        OVERDUE
+        RETURNED
     }
 
     public BookLoan() {
