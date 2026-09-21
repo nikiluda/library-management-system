@@ -1,7 +1,9 @@
 package com.zhanlin.library_management_system.security.web;
 
-import com.zhanlin.library_management_system.dto.LoginRequest;
+import com.zhanlin.library_management_system.models.LibraryUser;
+import com.zhanlin.library_management_system.security.dto.LoginRequest;
 import com.zhanlin.library_management_system.security.dto.AuthResponse;
+import com.zhanlin.library_management_system.security.dto.RegisterRequest;
 import com.zhanlin.library_management_system.security.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +31,18 @@ public class AuthController {
         );
 
         return ResponseEntity.ok( new AuthResponse(token));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponse> register(
+            @RequestBody RegisterRequest request) {
+
+        String token =  authService.register(
+                request.getEmail(),
+                request.getPassword()
+        );
+
+        return ResponseEntity.ok(new AuthResponse(token));
     }
 
 }

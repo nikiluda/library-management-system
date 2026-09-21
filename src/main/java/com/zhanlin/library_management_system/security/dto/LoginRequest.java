@@ -1,4 +1,4 @@
-package com.zhanlin.library_management_system.dto;
+package com.zhanlin.library_management_system.security.dto;
 
 import lombok.Getter;
 import lombok.Setter;
