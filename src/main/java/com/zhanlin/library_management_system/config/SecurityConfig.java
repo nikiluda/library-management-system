@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -37,12 +38,25 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/api/books/**")
+
+                        .requestMatchers(HttpMethod.GET, "/api/books/**")
                         .hasAnyRole("USER", "ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/api/books/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT, "/api/books/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/books/**")
+                        .hasRole("ADMIN")
+
                         .requestMatchers("/api/readers/**")
                         .hasRole("ADMIN")
+
                         .requestMatchers("/api/loans/**")
                         .hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
 
