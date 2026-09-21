@@ -9,20 +9,25 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
-    public AuthService(AuthenticationManager authenticationManager) {
+    public AuthService(AuthenticationManager authenticationManager,
+                       JwtService jwtService) {
         this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
 
-    public Authentication login(String email, String password) {
+    public String login(String email, String password) {
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 email,
                 password
         );
 
-        return authenticationManager.authenticate(authentication);
+        Authentication authenticated = authenticationManager.authenticate(authentication);
+
+        return jwtService.generateToken(authenticated);
     }
 
 }
