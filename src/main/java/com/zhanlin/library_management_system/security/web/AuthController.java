@@ -4,6 +4,7 @@ import com.zhanlin.library_management_system.security.dto.LoginRequest;
 import com.zhanlin.library_management_system.security.dto.AuthResponse;
 import com.zhanlin.library_management_system.security.dto.RegisterRequest;
 import com.zhanlin.library_management_system.security.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +23,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(
-            @RequestBody LoginRequest request) {
+            @Valid @RequestBody LoginRequest request) {
 
         String token = authService.login(
                 request.getEmail(),
@@ -34,7 +35,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(
-            @RequestBody RegisterRequest request) {
+            @Valid @RequestBody RegisterRequest request) {
 
         String token =  authService.register(
                 request.getEmail(),

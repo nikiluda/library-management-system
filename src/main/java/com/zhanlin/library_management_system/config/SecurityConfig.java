@@ -2,6 +2,7 @@ package com.zhanlin.library_management_system.config;
 
 
 import com.zhanlin.library_management_system.security.config.JwtProperties;
+import com.zhanlin.library_management_system.security.web.RestAuthenticationEntryPoint;
 import com.zhanlin.library_management_system.service.LibraryUserDetailsService;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,10 +31,16 @@ public class SecurityConfig {
 
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationConverter jwtAuthenticationConverter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   JwtAuthenticationConverter jwtAuthenticationConverter,
+                                                   RestAuthenticationEntryPoint restAuthenticationEntryPoint,
+                                                   AuthenticationManager authenticationManager) throws Exception {
 
         http
                 .csrf(csrf -> csrf.disable())
+
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(restAuthenticationEntryPoint))
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
