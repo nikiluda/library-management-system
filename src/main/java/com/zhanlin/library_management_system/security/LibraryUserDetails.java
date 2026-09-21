@@ -53,4 +53,8 @@ public class LibraryUserDetails implements UserDetails {
     public boolean isEnabled() {
         return user.isEnabled();
     }
+
+    public LibraryUser getUser() {
+        return user;
+    }
 }
