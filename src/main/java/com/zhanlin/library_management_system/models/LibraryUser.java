@@ -24,7 +24,7 @@ public class LibraryUser {
     private Role role;
 
     @Column(nullable = false)
-    private boolean enabled;
+    private boolean enabled = true;
 
     @Column(name = "crated_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
