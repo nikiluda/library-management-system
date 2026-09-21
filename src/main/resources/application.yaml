@@ -1,3 +1,6 @@
 spring:
   application:
     name: library-management-system
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 1800000
