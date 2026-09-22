@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import org.springframework.security.core.AuthenticationException;
 import java.net.URI;
 import java.util.List;
 
@@ -130,6 +131,19 @@ public class GlobalExceptionHandler {
                 ErrorCode.OPTIMISTIC_LOCK_CONFLICT,
                 ApiErrorMessage.OPTIMISTIC_LOCK_CONFLICT.getMessage(),
                 request
+        );
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ProblemDetail handleAuthenticationException(
+            AuthenticationException exception,
+            HttpServletRequest request) {
+
+        return createProblem(
+                ErrorCode.INVALID_CREDENTIALS,
+                ApiErrorMessage.INVALID_CREDENTIALS.getMessage(),
+                request
+
         );
     }
 
