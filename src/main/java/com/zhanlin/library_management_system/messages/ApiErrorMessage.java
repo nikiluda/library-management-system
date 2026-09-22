@@ -35,6 +35,7 @@ public enum ApiErrorMessage {
 
     USER_READER_NOT_FOUND("Reader profile is not associated with the current user"),
 
+    INVALID_CREDENTIALS("Invalid email or password"),
     ;
 
     private final String message;

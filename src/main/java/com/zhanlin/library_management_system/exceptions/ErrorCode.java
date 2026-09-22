@@ -31,6 +31,7 @@ public enum ErrorCode {
     FORBIDDEN(HttpStatus.FORBIDDEN, "Forbidden"),
 
     USER_READER_NOT_FOUND(HttpStatus.NOT_FOUND, "Reader profile not found"),
+    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "Invalid email or password")
     ;
 
     private final HttpStatus status;
