@@ -1,10 +1,3 @@
-
-app:
-  admin:
-    email: ${ADMIN_EMAIL}
-    password: ${ADMIN_PASSWORD}
-
-
 spring:
 
   datasource:
@@ -20,7 +13,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
 
   h2:
     console:

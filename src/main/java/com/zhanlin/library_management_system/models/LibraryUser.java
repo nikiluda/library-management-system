@@ -26,9 +26,8 @@ public class LibraryUser {
     @Column(nullable = false)
     private boolean enabled = true;
 
-    @Column(name = "crated_at", nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
-
 
     @OneToOne
     @JoinColumn(name = "reader_id", unique = true)
