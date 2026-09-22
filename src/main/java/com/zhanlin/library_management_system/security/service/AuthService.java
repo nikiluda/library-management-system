@@ -55,7 +55,6 @@ public class AuthService {
         return jwtService.generateToken(authenticated);
     }
 
-    //TODO: сделать кастомное исключение
     @Transactional(
             propagation = Propagation.REQUIRED,
             isolation = Isolation.DEFAULT,

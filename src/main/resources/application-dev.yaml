@@ -1,3 +1,10 @@
+
+app:
+  admin:
+    email: ${ADMIN_EMAIL}
+    password: ${ADMIN_PASSWORD}
+
+
 spring:
 
   datasource:
@@ -18,6 +25,8 @@ spring:
   h2:
     console:
       enabled: true
+
+
 
 
 
