@@ -2,6 +2,7 @@ package com.zhanlin.library_management_system.config;
 
 
 import com.zhanlin.library_management_system.security.config.JwtProperties;
+import com.zhanlin.library_management_system.security.web.RestAccessDeniedHandler;
 import com.zhanlin.library_management_system.security.web.RestAuthenticationEntryPoint;
 import com.zhanlin.library_management_system.service.LibraryUserDetailsService;
 import io.jsonwebtoken.security.Keys;
@@ -24,6 +25,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 
+import static org.springframework.security.oauth2.jwt.JwtTypeValidator.jwt;
+
 
 @EnableConfigurationProperties(JwtProperties.class)
 @Configuration
@@ -34,13 +37,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    JwtAuthenticationConverter jwtAuthenticationConverter,
                                                    RestAuthenticationEntryPoint restAuthenticationEntryPoint,
+                                                   RestAccessDeniedHandler restAccessDeniedHandler,
                                                    AuthenticationManager authenticationManager) throws Exception {
 
         http
                 .csrf(csrf -> csrf.disable())
 
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(restAuthenticationEntryPoint))
+                        .authenticationEntryPoint(restAuthenticationEntryPoint)
+                        .accessDeniedHandler(restAccessDeniedHandler))
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
@@ -68,7 +73,10 @@ public class SecurityConfig {
                 )
 
                 .oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(jwt ->
+                        oauth2
+                                .authenticationEntryPoint(restAuthenticationEntryPoint)
+                                .jwt(jwt ->
+
                                 jwt.jwtAuthenticationConverter(
                                         jwtAuthenticationConverter
                                 )
