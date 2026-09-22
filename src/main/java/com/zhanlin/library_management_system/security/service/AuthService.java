@@ -1,5 +1,8 @@
 package com.zhanlin.library_management_system.security.service;
 
+import com.zhanlin.library_management_system.exceptions.BusinessRuleException;
+import com.zhanlin.library_management_system.exceptions.ErrorCode;
+import com.zhanlin.library_management_system.messages.ApiErrorMessage;
 import com.zhanlin.library_management_system.models.LibraryUser;
 import com.zhanlin.library_management_system.models.Reader;
 import com.zhanlin.library_management_system.models.Role;
@@ -60,8 +63,19 @@ public class AuthService {
     )
     public String register(RegisterRequest request) {
 
-        if (userRepository.existsByEmail(request.getEmail()))
-            throw new IllegalArgumentException("Email already exists");
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new BusinessRuleException(
+                    ErrorCode.EMAIL_ALREADY_EXISTS,
+                    ApiErrorMessage.EMAIL_ALREADY_EXISTS.getMessage(request.getEmail())
+            );
+        }
+
+        if (readerRepository.existsByPhone(request.getPhone())) {
+            throw new BusinessRuleException(
+                    ErrorCode.PHONE_ALREADY_EXISTS,
+                    ApiErrorMessage.PHONE_ALREADY_EXISTS.getMessage(request.getPhone())
+            );
+        }
 
         Reader reader = new Reader();
 

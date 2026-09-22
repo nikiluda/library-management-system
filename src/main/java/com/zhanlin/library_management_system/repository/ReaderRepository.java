@@ -11,4 +11,5 @@ public interface ReaderRepository extends JpaRepository<Reader, Long>, JpaSpecif
     boolean existsByEmail(String email);
 
     boolean existsByPhone(String phone);
+
 }
