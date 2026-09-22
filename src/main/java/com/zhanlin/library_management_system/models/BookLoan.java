@@ -32,6 +32,7 @@ public class BookLoan {
     private LocalDate returnDate;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private LoanStatus status;
 
     public enum LoanStatus {
