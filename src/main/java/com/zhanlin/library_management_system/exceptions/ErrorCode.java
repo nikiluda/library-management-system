@@ -29,6 +29,8 @@ public enum ErrorCode {
 
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "Unauthorized"),
     FORBIDDEN(HttpStatus.FORBIDDEN, "Forbidden"),
+
+    USER_READER_NOT_FOUND(HttpStatus.NOT_FOUND, "Reader profile not found"),
     ;
 
     private final HttpStatus status;

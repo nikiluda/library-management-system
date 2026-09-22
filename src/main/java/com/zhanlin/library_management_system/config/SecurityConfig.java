@@ -70,6 +70,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/readers/**")
                         .hasRole("ADMIN")
 
+                        .requestMatchers(HttpMethod.GET, "/api/loans/my")
+                        .hasAnyRole("USER", "ADMIN")
+
                         .requestMatchers("/api/loans/**")
                         .hasRole("ADMIN")
 
