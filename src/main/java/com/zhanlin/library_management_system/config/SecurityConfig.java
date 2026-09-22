@@ -43,6 +43,10 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
 
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.sameOrigin())
+                )
+
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(restAuthenticationEntryPoint)
                         .accessDeniedHandler(restAccessDeniedHandler))

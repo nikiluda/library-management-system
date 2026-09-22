@@ -29,6 +29,11 @@ public class LibraryUser {
     @Column(name = "crated_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+
+    @OneToOne
+    @JoinColumn(name = "reader_id", unique = true)
+    private Reader reader;
+
     public LibraryUser(String email, String passwordHash, Role role) {
         this.email = email;
         this.passwordHash = passwordHash;
@@ -85,5 +90,13 @@ public class LibraryUser {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Reader getReader() {
+        return reader;
+    }
+
+    public void setReader(Reader reader) {
+        this.reader = reader;
     }
 }

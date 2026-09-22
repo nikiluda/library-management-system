@@ -37,10 +37,7 @@ public class AuthController {
     public ResponseEntity<AuthResponse> register(
             @Valid @RequestBody RegisterRequest request) {
 
-        String token =  authService.register(
-                request.getEmail(),
-                request.getPassword()
-        );
+        String token =  authService.register(request);
 
         return ResponseEntity.ok(new AuthResponse(token));
     }
