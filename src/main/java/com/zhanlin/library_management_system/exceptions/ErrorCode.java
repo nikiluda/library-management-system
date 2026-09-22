@@ -26,6 +26,11 @@ public enum ErrorCode {
     OPTIMISTIC_LOCK_CONFLICT(HttpStatus.CONFLICT, "Optimistic locking conflict"),
 
     INVALID_BOOK_COPIES(HttpStatus.CONFLICT, "Invalid book copies"),
+
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "Unauthorized"),
+    FORBIDDEN(HttpStatus.FORBIDDEN, "Forbidden"),
+
+    USER_READER_NOT_FOUND(HttpStatus.NOT_FOUND, "Reader profile not found"),
     ;
 
     private final HttpStatus status;

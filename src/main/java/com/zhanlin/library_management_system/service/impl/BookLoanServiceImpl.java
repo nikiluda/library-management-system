@@ -1,9 +1,8 @@
 package com.zhanlin.library_management_system.service.impl;
 
-import com.zhanlin.library_management_system.dto.BookFilterDto;
+
 import com.zhanlin.library_management_system.dto.LoanFilterDto;
 import com.zhanlin.library_management_system.dto.PageResponse;
-import com.zhanlin.library_management_system.dto.book.BookResponseDto;
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanRequestDto;
 import com.zhanlin.library_management_system.dto.bookLoan.BookLoanResponseDto;
 import com.zhanlin.library_management_system.exceptions.*;
@@ -15,10 +14,12 @@ import com.zhanlin.library_management_system.messages.ApiErrorMessage;
 import com.zhanlin.library_management_system.models.Book;
 import com.zhanlin.library_management_system.models.BookLoan;
 import com.zhanlin.library_management_system.models.Reader;
+import com.zhanlin.library_management_system.models.Role;
 import com.zhanlin.library_management_system.repository.BookLoanRepository;
 import com.zhanlin.library_management_system.repository.BookRepository;
 import com.zhanlin.library_management_system.repository.ReaderRepository;
 
+import com.zhanlin.library_management_system.security.service.CurrentUserService;
 import com.zhanlin.library_management_system.service.BookLoanService;
 import com.zhanlin.library_management_system.specification.LoanSpecifications;
 import com.zhanlin.library_management_system.util.SortValidator;
@@ -41,14 +42,16 @@ public class BookLoanServiceImpl implements BookLoanService {
     private final BookLoanMapper bookLoanMapper;
     private final PageMapper pageMapper;
     private final SortValidator sortValidator;
+    private final CurrentUserService currentUserService;
 
-    public BookLoanServiceImpl(BookLoanRepository bookLoanRepository, BookRepository bookRepository, ReaderRepository readerRepository, BookLoanMapper bookLoanMapper, PageMapper pageMapper, SortValidator sortValidator) {
+    public BookLoanServiceImpl(BookLoanRepository bookLoanRepository, BookRepository bookRepository, ReaderRepository readerRepository, BookLoanMapper bookLoanMapper, PageMapper pageMapper, SortValidator sortValidator, CurrentUserService currentUserService) {
         this.bookLoanRepository = bookLoanRepository;
         this.bookRepository = bookRepository;
         this.readerRepository = readerRepository;
         this.bookLoanMapper = bookLoanMapper;
         this.pageMapper = pageMapper;
         this.sortValidator = sortValidator;
+        this.currentUserService = currentUserService;
     }
 
     private Book findBook(Long id) {
@@ -81,6 +84,19 @@ public class BookLoanServiceImpl implements BookLoanService {
         return bookLoan;
 
     }
+
+    private BookLoan findLoanForCurrentUser(Long loanId) {
+
+        Long readerId = currentUserService.getCurrentReaderId();
+
+        return bookLoanRepository
+                .findByIdAndReaderId(loanId, readerId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ErrorCode.LOAN_NOT_FOUND,
+                        ApiErrorMessage.LOAN_NOT_FOUND_BY_ID.getMessage(loanId)
+                ));
+    }
+
 
 
     @Audit(AuditAction.BOOK_ISSUED)
@@ -137,7 +153,13 @@ public class BookLoanServiceImpl implements BookLoanService {
     @Override
     @Audit(AuditAction.BOOK_RETURNED)
     public BookLoanResponseDto returnBook(Long loanId) {
-        BookLoan bookLoan = findLoan(loanId);
+        BookLoan bookLoan;
+
+        if (currentUserService.getCurrentUserRole() == Role.ADMIN) {
+            bookLoan = findLoan(loanId);
+        } else {
+            bookLoan = findLoanForCurrentUser(loanId);
+        }
 
 
         if (bookLoan.getStatus() == BookLoan.LoanStatus.RETURNED)
@@ -174,6 +196,19 @@ public class BookLoanServiceImpl implements BookLoanService {
         );
         Page<BookLoan> page = bookLoanRepository.findAll(specification, pageable);
         Page<BookLoanResponseDto> result = page.map(bookLoanMapper::toDto);
+
+        return pageMapper.toPageResponse(result);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResponse<BookLoanResponseDto> getLoansByCurrentUser(Pageable pageable) {
+
+        Long readerId = currentUserService.getCurrentReaderId();
+
+        Page<BookLoan> page = bookLoanRepository.findByReaderId(readerId, pageable);
+
+        Page<BookLoanResponseDto> result =page.map(bookLoanMapper::toDto);
 
         return pageMapper.toPageResponse(result);
     }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BookLoanRepository extends JpaRepository<BookLoan, Long>, JpaSpecificationExecutor<BookLoan> {
@@ -24,4 +25,6 @@ public interface BookLoanRepository extends JpaRepository<BookLoan, Long>, JpaSp
             Long readerId,
             BookLoan.LoanStatus status
     );
+
+    Optional<BookLoan> findByIdAndReaderId(Long loanId, Long readerId);
 }

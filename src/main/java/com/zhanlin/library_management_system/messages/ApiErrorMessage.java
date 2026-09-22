@@ -30,6 +30,11 @@ public enum ApiErrorMessage {
 
     INVALID_BOOK_COPIES("Available copies cannot exceed total copies"),
 
+    UNAUTHORIZED("Authentication is required"),
+    FORBIDDEN("You do not have permission to access this resource"),
+
+    USER_READER_NOT_FOUND("Reader profile is not associated with the current user"),
+
     ;
 
     private final String message;

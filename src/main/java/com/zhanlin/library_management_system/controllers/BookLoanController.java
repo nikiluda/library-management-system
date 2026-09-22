@@ -64,6 +64,22 @@ public class BookLoanController {
         ));
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<ApiResponse<PageResponse<BookLoanResponseDto>>> getMyLoans(
+            @PageableDefault(
+                    size = 20,
+                    sort = {"loanDate"},
+                    direction = Sort.Direction.ASC
+            )
+            Pageable pageable) {
+
+        return ResponseEntity.ok(
+                ApiResponse.createSuccessful(
+                        bookLoanService.getLoansByCurrentUser(pageable)
+                )
+        );
+    }
+
     @GetMapping("/reader/{readerId}")
     public ResponseEntity<ApiResponse<PageResponse<BookLoanResponseDto>>> getLoansByReader(
             @PathVariable Long readerId,
@@ -82,9 +98,5 @@ public class BookLoanController {
         return ResponseEntity.ok(ApiResponse.createSuccessful(bookLoanService.getOverdueLoans(pageable)
         ));
     }
-
-
-
-
 
 }
