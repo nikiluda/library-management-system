@@ -1,5 +1,6 @@
-package com.zhanlin.library_management_system.config;
+package com.zhanlin.library_management_system.security.config;
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +17,7 @@ public class DevSecurityConfig {
     public SecurityFilterChain h2SecurityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .securityMatcher("/h2-console/**")
+                .securityMatcher(PathRequest.toH2Console())
                 .csrf(csrf -> csrf.disable())
                 .headers(headers ->
                         headers.frameOptions(frame -> frame.sameOrigin())

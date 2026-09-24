@@ -1,18 +1,24 @@
 spring:
 
   datasource:
-    url: jdbc:h2:mem:librarydb
+    url: jdbc:h2:mem:librarydb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
     username: sa
     password:
     driver-class-name: org.h2.Driver
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+
+  flyway:
+    enabled: true
+    locations:
+      - classpath:db/migration/common
+      - classpath:db/migration/dev
 
   h2:
     console:
@@ -37,3 +43,8 @@ logging:
     com.zhanlin.library_management_system: DEBUG
     org.springframework: INFO
     org.hibernate: WARN
+
+app:
+  admin:
+    email: ${ADMIN_EMAIL}
+    password: ${ADMIN_PASSWORD}
