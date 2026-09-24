@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class MdcFilter extends OncePerRequestFilter {
+public class TraceIdFilter extends OncePerRequestFilter {
 
 
 
@@ -26,11 +26,12 @@ public class MdcFilter extends OncePerRequestFilter {
         String traceId = UUID.randomUUID().toString();
 
         MDC.put(LoggingConstants.TRACE_ID, traceId);
+        response.setHeader(LoggingConstants.TRACE_ID_HEADER, traceId);
 
         try {
             filterChain.doFilter(request, response);
         } finally {
-            MDC.clear();
+            MDC.remove(LoggingConstants.TRACE_ID);
         }
     }
 }

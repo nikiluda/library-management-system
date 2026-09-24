@@ -1,12 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <included>
 
+    <appender name="TEXT_CONSOLE"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+
+            <charset>UTF-8</charset>
+
+            <pattern>
+                %clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) [%thread] [traceId=%X{traceId:-no-trace}] %cyan(%logger{36}) - %msg %kvp%n%ex{full}
+            </pattern>
+        </encoder>
+    </appender>
+
+
+    <appender name="APPLICATION_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>${LOG_DIR}/application.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+
+            <fileNamePattern>
+                ${LOG_DIR}/archive/application.%d{yyyy-MM-dd}.%i.log.gz
+            </fileNamePattern>
+
+            <maxFileSize>50MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>2GB</totalSizeCap>
+
+        </rollingPolicy>
+
+        <encoder>
+            <charset>UTF-8</charset>
+
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [traceId=%X{traceId:-no-trace}] %logger{36} - %msg %kvp%n%ex{full}
+            </pattern>
+        </encoder>
+
+    </appender>
+
+
+    <appender name="AUDIT_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>${LOG_DIR}/audit.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+
+            <fileNamePattern>
+                ${LOG_DIR}/archive/audit.%d{yyyy-MM-dd}.%i.log.gz
+            </fileNamePattern>
+
+            <maxFileSize>20MB</maxFileSize>
+            <maxHistory>90</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+
+        </rollingPolicy>
+
+        <encoder>
+            <charset>UTF-8</charset>
+
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [traceId=%X{traceId:-no-trace}] - %msg %kvp%n%ex{full}
+            </pattern>
+        </encoder>
+
+    </appender>
+
+
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="com.zaxxer.hikari" level="INFO"/>
+
+    <logger name="com.zhanlin.library_management_system" level="DEBUG"/>
+
+
+
+    <logger name="AUDIT"
+            level="INFO"
+            additivity="false">
+
+        <appender-ref ref="AUDIT_FILE"/>
+
+    </logger>
+
+
     <root level="INFO">
-
-        <appender-ref ref="CONSOLE"/>
-
-        <appender-ref ref="ASYNC_FILE"/>
-
+        <appender-ref ref="TEXT_CONSOLE"/>
+        <appender-ref ref="APPLICATION_FILE"/>
     </root>
+
 
 </included>

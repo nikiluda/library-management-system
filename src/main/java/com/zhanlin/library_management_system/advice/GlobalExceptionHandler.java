@@ -2,9 +2,13 @@ package com.zhanlin.library_management_system.advice;
 
 
 import com.zhanlin.library_management_system.exceptions.*;
+import com.zhanlin.library_management_system.logging.LoggingConstants;
 import com.zhanlin.library_management_system.messages.ApiErrorMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -19,6 +23,8 @@ import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     private ProblemDetail createProblem(
             ErrorCode errorCode,
@@ -36,6 +42,16 @@ public class GlobalExceptionHandler {
                 "code",
                 errorCode.name()
         );
+
+        String traceId = MDC.get(LoggingConstants.TRACE_ID);
+
+        if (traceId != null) {
+            problemDetail.setProperty(
+                    "traceId",
+                    traceId
+            );
+        }
+
 
         return problemDetail;
     }
@@ -95,6 +111,16 @@ public class GlobalExceptionHandler {
             Exception exception,
             HttpServletRequest request
     ) {
+
+        log.atError()
+                .addKeyValue("event", "unexpected_api_error")
+                .addKeyValue("errorType", exception.getClass().getSimpleName())
+                .addKeyValue("httpMethod", request.getMethod())
+                .addKeyValue("path", request.getRequestURI())
+                .setCause(exception)
+                .log("Unexpected API error");
+
+
         return createProblem(
                 ErrorCode.INTERNAL_ERROR,
                 ApiErrorMessage.INTERNAL_ERROR.getMessage(),

@@ -1,20 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <included>
 
-    <logger name="com.zhanlin.library_management_system"
-            level="INFO"/>
+    <appender name="JSON_CONSOLE"
+              class="ch.qos.logback.core.ConsoleAppender">
 
-    <logger name="AUDIT"
-            level="INFO"
-            additivity="false">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp/>
+                <logLevel/>
+                <threadName/>
+                <loggerName/>
+                <mdc/>
+                <keyValuePairs/>
+                <message/>
+                <stackTrace/>
+            </providers>
+        </encoder>
+    </appender>
 
-        <appender-ref ref="ASYNC_AUDIT"/>
 
+
+    <appender name="JSON_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>${LOG_DIR}/application.json</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+
+            <fileNamePattern>
+                ${LOG_DIR}/archive/application.%d{yyyy-MM-dd}.%i.json.gz
+            </fileNamePattern>
+
+            <maxFileSize>50MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>2GB</totalSizeCap>
+
+        </rollingPolicy>
+
+
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp/>
+                <logLevel/>
+                <threadName/>
+                <loggerName/>
+                <mdc/>
+                <keyValuePairs/>
+                <message/>
+                <stackTrace/>
+            </providers>
+        </encoder>
+
+    </appender>
+
+
+
+
+    <appender name="ASYNC_JSON_FILE"
+              class="ch.qos.logback.classic.AsyncAppender">
+
+        <queueSize>1024</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>false</includeCallerData>
+
+        <appender-ref ref="JSON_FILE"/>
+
+    </appender>
+
+
+
+    <appender name="AUDIT_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/audit.json</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+
+            <fileNamePattern>
+                ${LOG_DIR}/archive/audit.%d{yyyy-MM-dd}.%i.json.gz
+            </fileNamePattern>
+
+
+            <maxFileSize>20MB</maxFileSize>
+            <maxHistory>90</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+
+        </rollingPolicy>
+
+        <encoder class = "net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp/>
+                <logLevel/>
+                <threadName/>
+                <loggerName/>
+                <mdc/>
+                <keyValuePairs/>
+                <message/>
+                <stackTrace/>
+            </providers>
+        </encoder>
+    </appender>
+
+
+
+
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="com.zaxxer.hikari" level="WARN"/>
+
+
+
+    <logger name="com.zhanlin.library_management_system" level="INFO"/>
+
+    <logger name="AUDIT" level="INFO" additivity="false">
+        <appender-ref ref="AUDIT_FILE"/>
     </logger>
 
     <root level="WARN">
+        <appender-ref ref="JSON_CONSOLE"/>
 
-        <appender-ref ref="ASYNC_JSON"/>
+        <appender-ref ref="ASYNC_JSON_FILE"/>
 
     </root>
 

@@ -2,6 +2,9 @@ package com.zhanlin.library_management_system.security.service;
 
 import com.zhanlin.library_management_system.exceptions.BusinessRuleException;
 import com.zhanlin.library_management_system.exceptions.ErrorCode;
+import com.zhanlin.library_management_system.logging.annotation.Audit;
+import com.zhanlin.library_management_system.logging.annotation.AuditAction;
+import com.zhanlin.library_management_system.logging.annotation.LogExecutionTime;
 import com.zhanlin.library_management_system.messages.ApiErrorMessage;
 import com.zhanlin.library_management_system.models.LibraryUser;
 import com.zhanlin.library_management_system.models.Reader;
@@ -60,6 +63,9 @@ public class AuthService {
             isolation = Isolation.DEFAULT,
             readOnly = false
     )
+
+    @Audit(AuditAction.USER_REGISTERED)
+    @LogExecutionTime
     public String register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {

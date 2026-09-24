@@ -8,6 +8,7 @@ import com.zhanlin.library_management_system.dto.bookLoan.BookLoanResponseDto;
 import com.zhanlin.library_management_system.exceptions.*;
 import com.zhanlin.library_management_system.logging.annotation.Audit;
 import com.zhanlin.library_management_system.logging.annotation.AuditAction;
+import com.zhanlin.library_management_system.logging.annotation.LogExecutionTime;
 import com.zhanlin.library_management_system.mappers.BookLoanMapper;
 import com.zhanlin.library_management_system.mappers.PageMapper;
 import com.zhanlin.library_management_system.messages.ApiErrorMessage;
@@ -101,6 +102,7 @@ public class BookLoanServiceImpl implements BookLoanService {
 
     @Audit(AuditAction.BOOK_ISSUED)
     @Override
+    @LogExecutionTime
     public BookLoanResponseDto loanBook(BookLoanRequestDto dto) {
 
         Book book = findBook(dto.bookId());
@@ -152,6 +154,7 @@ public class BookLoanServiceImpl implements BookLoanService {
 
     @Override
     @Audit(AuditAction.BOOK_RETURNED)
+    @LogExecutionTime
     public BookLoanResponseDto returnBook(Long loanId) {
         BookLoan bookLoan;
 
