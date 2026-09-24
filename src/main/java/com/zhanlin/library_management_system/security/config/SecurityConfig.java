@@ -1,10 +1,9 @@
-package com.zhanlin.library_management_system.config;
+package com.zhanlin.library_management_system.security.config;
 
 
-import com.zhanlin.library_management_system.security.config.JwtProperties;
 import com.zhanlin.library_management_system.security.web.RestAccessDeniedHandler;
 import com.zhanlin.library_management_system.security.web.RestAuthenticationEntryPoint;
-import com.zhanlin.library_management_system.service.LibraryUserDetailsService;
+import com.zhanlin.library_management_system.security.service.LibraryUserDetailsService;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -38,18 +37,13 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    JwtAuthenticationConverter jwtAuthenticationConverter,
                                                    RestAuthenticationEntryPoint restAuthenticationEntryPoint,
-                                                   RestAccessDeniedHandler restAccessDeniedHandler,
-                                                   AuthenticationManager authenticationManager) throws Exception {
+                                                   RestAccessDeniedHandler restAccessDeniedHandler) throws Exception {
 
         http
                 .csrf(csrf -> csrf.disable())
 
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-
-                .headers(headers -> headers
-                        .frameOptions(frame -> frame.sameOrigin())
                 )
 
                 .exceptionHandling(exception -> exception

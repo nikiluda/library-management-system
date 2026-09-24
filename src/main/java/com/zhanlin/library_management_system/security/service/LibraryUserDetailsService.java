@@ -1,4 +1,4 @@
-package com.zhanlin.library_management_system.service;
+package com.zhanlin.library_management_system.security.service;
 
 import com.zhanlin.library_management_system.models.LibraryUser;
 import com.zhanlin.library_management_system.repository.UserRepository;

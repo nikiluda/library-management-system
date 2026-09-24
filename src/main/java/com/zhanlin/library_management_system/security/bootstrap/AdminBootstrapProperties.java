@@ -1,4 +1,4 @@
-package com.zhanlin.library_management_system.config;
+package com.zhanlin.library_management_system.security.bootstrap;
 
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;
