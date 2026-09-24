@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <!-- Общие компоненты -->
-    <include resource="logback/logback-appenders.xml"/>
-    <include resource="logback/logback-loggers.xml"/>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-    <!-- Профили -->
+    <springProperty
+        scope="context"
+        name="LOG_DIR"
+        source="logging.file.path"
+        defaultValue="logs"/>
+
+
     <springProfile name="dev">
         <include resource="logback/logback-dev.xml"/>
     </springProfile>
@@ -16,6 +20,10 @@
 
     <springProfile name="prod">
         <include resource="logback/logback-prod.xml"/>
+    </springProfile>
+
+    <springProfile name="!dev &amp; !int &amp; !prod">
+        <include resource="logback/logback-dev.xml"/>
     </springProfile>
 
 </configuration>

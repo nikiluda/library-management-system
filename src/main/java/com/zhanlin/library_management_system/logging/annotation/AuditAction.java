@@ -11,5 +11,6 @@ public enum AuditAction {
     READER_DELETED,
 
     BOOK_ISSUED,
-    BOOK_RETURNED
+    BOOK_RETURNED,
+    USER_REGISTERED
 }
