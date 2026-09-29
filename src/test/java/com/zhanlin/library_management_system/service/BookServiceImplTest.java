@@ -3,11 +3,14 @@ package com.zhanlin.library_management_system.service;
 
 import com.zhanlin.library_management_system.dto.book.BookRequestDto;
 import com.zhanlin.library_management_system.dto.book.BookResponseDto;
+import com.zhanlin.library_management_system.exceptions.BusinessRuleException;
 import com.zhanlin.library_management_system.exceptions.ErrorCode;
 import com.zhanlin.library_management_system.exceptions.ResourceAlreadyExistsException;
 import com.zhanlin.library_management_system.exceptions.ResourceNotFoundException;
 import com.zhanlin.library_management_system.mappers.BookMapper;
 import com.zhanlin.library_management_system.models.Book;
+import com.zhanlin.library_management_system.models.BookLoan;
+import com.zhanlin.library_management_system.repository.BookLoanRepository;
 import com.zhanlin.library_management_system.repository.BookRepository;
 import com.zhanlin.library_management_system.service.impl.BookServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -30,6 +33,8 @@ public class BookServiceImplTest {
 
     @Mock
     private BookRepository bookRepository;
+    @Mock
+    private BookLoanRepository bookLoanRepository;
 
     @Mock
     private BookMapper bookMapper;
@@ -200,6 +205,55 @@ public class BookServiceImplTest {
         verify(bookRepository, never()).save(any());
         verify(bookMapper, never()).toDto(any());
 
+    }
+
+    @Test
+    void updateBook_shouldRecalculateAvailableCopiesFromActiveLoans() {
+        Book book = new Book("Original", "Author", "5050007657", 2000, 3, 2);
+        BookRequestDto dto = new BookRequestDto("Updated", "Author", 2000, "5050007657", 5);
+        given(bookRepository.findById(1L)).willReturn(Optional.of(book));
+        given(bookLoanRepository.countByBookIdAndStatus(1L, BookLoan.LoanStatus.ACTIVE))
+                .willReturn(1L);
+        given(bookRepository.save(book)).willReturn(book);
+
+        bookService.updateBook(1L, dto);
+
+        assertThat(book.getTotalCopies()).isEqualTo(5);
+        assertThat(book.getAvailableCopies()).isEqualTo(4);
+    }
+
+    @Test
+    void updateBook_shouldAllowReducingTotalToActiveLoanCount() {
+        Book book = new Book("Original", "Author", "5050007657", 2000, 3, 2);
+        BookRequestDto dto = new BookRequestDto("Updated", "Author", 2000, "5050007657", 1);
+        given(bookRepository.findById(1L)).willReturn(Optional.of(book));
+        given(bookLoanRepository.countByBookIdAndStatus(1L, BookLoan.LoanStatus.ACTIVE))
+                .willReturn(1L);
+        given(bookRepository.save(book)).willReturn(book);
+
+        bookService.updateBook(1L, dto);
+
+        assertThat(book.getTotalCopies()).isEqualTo(1);
+        assertThat(book.getAvailableCopies()).isZero();
+    }
+
+    @Test
+    void updateBook_shouldRejectTotalBelowActiveLoansWithoutChangingBook() {
+        Book book = new Book("Original", "Author", "5050007657", 2000, 3, 0);
+        BookRequestDto dto = new BookRequestDto("Updated", "Author", 2000, "5050007657", 2);
+        given(bookRepository.findById(1L)).willReturn(Optional.of(book));
+        given(bookLoanRepository.countByBookIdAndStatus(1L, BookLoan.LoanStatus.ACTIVE))
+                .willReturn(3L);
+
+        assertThatThrownBy(() -> bookService.updateBook(1L, dto))
+                .isInstanceOf(BusinessRuleException.class)
+                .extracting(ex -> ((BusinessRuleException) ex).getErrorCode())
+                .isEqualTo(ErrorCode.TOTAL_COPIES_BELOW_ACTIVE_LOANS);
+        assertThat(book.getTitle()).isEqualTo("Original");
+        assertThat(book.getTotalCopies()).isEqualTo(3);
+        assertThat(book.getAvailableCopies()).isZero();
+        verify(bookRepository, never()).save(any());
+        verify(bookMapper, never()).updateBook(any(), any());
     }
 
 }

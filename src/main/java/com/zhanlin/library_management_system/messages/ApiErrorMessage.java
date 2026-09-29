@@ -29,6 +29,7 @@ public enum ApiErrorMessage {
     OPTIMISTIC_LOCK_CONFLICT("The resource was modified by another transaction"),
 
     INVALID_BOOK_COPIES("Available copies cannot exceed total copies"),
+    TOTAL_COPIES_BELOW_ACTIVE_LOANS("Total copies cannot be less than the %s active loans for this book"),
 
     UNAUTHORIZED("Authentication is required"),
     FORBIDDEN("You do not have permission to access this resource"),

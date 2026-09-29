@@ -140,10 +140,7 @@ public class BookLoanServiceImpl implements BookLoanService {
         bookLoan.setLoanDate(LocalDate.now());
 
 
-        LocalDate targetDueDate = (dto.dueDate() != null)
-                ? dto.dueDate()
-                :LocalDate.now().plusDays(14);
-        bookLoan.setDueDate(targetDueDate);
+        bookLoan.setDueDate(dto.dueDate());
         bookLoan.setStatus(BookLoan.LoanStatus.ACTIVE);
 
         BookLoan savedLoan = bookLoanRepository.save(bookLoan);

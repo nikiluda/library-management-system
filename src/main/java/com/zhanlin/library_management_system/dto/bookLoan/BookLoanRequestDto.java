@@ -14,6 +14,7 @@ public record BookLoanRequestDto(
         @NotNull @Positive
         Long readerId,
 
+        @NotNull(message = "Due date is required")
         @FutureOrPresent
         LocalDate dueDate
 ) {

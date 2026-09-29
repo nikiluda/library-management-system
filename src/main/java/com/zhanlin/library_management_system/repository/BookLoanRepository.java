@@ -26,5 +26,7 @@ public interface BookLoanRepository extends JpaRepository<BookLoan, Long>, JpaSp
             BookLoan.LoanStatus status
     );
 
+    long countByBookIdAndStatus(Long bookId, BookLoan.LoanStatus status);
+
     Optional<BookLoan> findByIdAndReaderId(Long loanId, Long readerId);
 }
