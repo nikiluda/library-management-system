@@ -27,7 +27,6 @@ public class BookMapper {
         book.setAuthor(dto.author());
         book.setIsbn(dto.isbn());
         book.setPublicationYear(dto.publicationYear());
-        book.setTotalCopies(dto.totalCopies());
     }
 
 

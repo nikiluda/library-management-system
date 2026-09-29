@@ -15,6 +15,8 @@ import com.zhanlin.library_management_system.mappers.BookMapper;
 import com.zhanlin.library_management_system.mappers.PageMapper;
 import com.zhanlin.library_management_system.messages.ApiErrorMessage;
 import com.zhanlin.library_management_system.models.Book;
+import com.zhanlin.library_management_system.models.BookLoan;
+import com.zhanlin.library_management_system.repository.BookLoanRepository;
 import com.zhanlin.library_management_system.repository.BookRepository;
 
 import com.zhanlin.library_management_system.service.BookService;
@@ -32,13 +34,15 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+    private final BookLoanRepository bookLoanRepository;
     private final BookMapper bookMapper;
     private final PageMapper pageMapper;
     private final SortValidator sortValidator;
 
 
-    public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper, PageMapper pageMapper, SortValidator sortValidator) {
+    public BookServiceImpl(BookRepository bookRepository, BookLoanRepository bookLoanRepository, BookMapper bookMapper, PageMapper pageMapper, SortValidator sortValidator) {
         this.bookRepository = bookRepository;
+        this.bookLoanRepository = bookLoanRepository;
         this.bookMapper = bookMapper;
         this.pageMapper = pageMapper;
         this.sortValidator = sortValidator;
@@ -83,14 +87,17 @@ public class BookServiceImpl implements BookService {
             );
         }
 
-        bookMapper.updateBook(dto, book);
-
-        if (book.getAvailableCopies() > book.getTotalCopies()) {
+        long activeLoans = bookLoanRepository.countByBookIdAndStatus(id, BookLoan.LoanStatus.ACTIVE);
+        if (activeLoans > dto.totalCopies()) {
             throw new BusinessRuleException(
-                    ErrorCode.INVALID_BOOK_COPIES,
-                    ApiErrorMessage.INVALID_BOOK_COPIES.getMessage()
+                    ErrorCode.TOTAL_COPIES_BELOW_ACTIVE_LOANS,
+                    ApiErrorMessage.TOTAL_COPIES_BELOW_ACTIVE_LOANS.getMessage(activeLoans)
             );
         }
+
+        bookMapper.updateBook(dto, book);
+        book.setTotalCopies(dto.totalCopies());
+        book.setAvailableCopies((int) (dto.totalCopies() - activeLoans));
 
         Book updatedBook = bookRepository.save(book);
         return bookMapper.toDto(updatedBook);

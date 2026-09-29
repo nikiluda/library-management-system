@@ -26,6 +26,7 @@ public enum ErrorCode {
     OPTIMISTIC_LOCK_CONFLICT(HttpStatus.CONFLICT, "Optimistic locking conflict"),
 
     INVALID_BOOK_COPIES(HttpStatus.CONFLICT, "Invalid book copies"),
+    TOTAL_COPIES_BELOW_ACTIVE_LOANS(HttpStatus.CONFLICT, "Total copies below active loans"),
 
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "Unauthorized"),
     FORBIDDEN(HttpStatus.FORBIDDEN, "Forbidden"),
